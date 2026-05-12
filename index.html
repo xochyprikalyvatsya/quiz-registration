@@ -3,387 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Регистрация на квиз | Эйнштейн Party</title>
+    <title>ТЕСТ: 3 варианта карточек игр</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-image: url('https://s10.iimage.su/s/12/giEDAXOxrm1rfHpZwnbo7nY8VZZG0jJcqZVepbbFO.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
+            background: #1a1a2e;
             padding: 20px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .test-block {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .test-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2a5298;
+            color: #1e3c72;
+        }
+
+        /* ОБЩИЕ СТИЛИ ДЛЯ ВСЕХ ВАРИАНТОВ */
+        .game-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .game-card.selected {
+            border-color: #2a5298;
+            background: #f0f5ff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .game-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #1a1a2e; }
+        .game-date { font-size: 13px; color: #666; margin-bottom: 12px; }
+        .game-image { width: 100%; border-radius: 16px; display: block; background: #f0f0f0; }
+
+        /* === ВАРИАНТ 1: левое выравнивание, увеличенные картинки === */
+        .variant-1 .games-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .variant-1 .game-card {
+            display: block;
+        }
+        .variant-1 .game-image {
+            max-width: 100%;
+        }
+
+        /* === ВАРИАНТ 2: кирпичная кладка (2 колонки) === */
+        .variant-2 .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        /* === ВАРИАНТ 3: карусель (горизонтальный скролл) === */
+        .variant-3 .games-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 15px;
+        }
+        .variant-3 .game-card {
+            flex: 0 0 85%;
+            scroll-snap-align: start;
+        }
+        @media (min-width: 768px) {
+            .variant-3 .game-card {
+                flex: 0 0 45%;
+            }
+        }
+
+        /* Стили для формы (вопросы) — общие для всех */
+        .players-grid, .yesno-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0 20px 0;
+        }
+        .player-btn, .yesno-btn {
+            background: #f0f2f5;
+            border: 1px solid #ccc;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .player-btn.selected, .yesno-btn.selected {
+            background: #2a5298;
+            color: white;
+            border-color: #2a5298;
+        }
+        .question-title {
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            font-size: 18px;
+        }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid #ccc; font-size: 16px; }
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
             align-items: center;
         }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            z-index: 0;
-        }
-
-        .form-container, .thank-you {
-            position: relative;
-            z-index: 1;
-            max-width: 1000px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 40px;
-            padding: 30px 25px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .form-container.hidden { display: none; }
-        .thank-you { text-align: center; display: none; background: rgba(255, 255, 255, 0.97); }
-        .thank-you.show { display: block; }
-
-        .thank-you h2 { font-size: 28px; margin-bottom: 15px; color: #1e3c72; }
-        .thank-you p { font-size: 18px; margin-bottom: 25px; }
-        .thank-you button { 
-            background: linear-gradient(135deg, #1e3c72, #2a5298); 
-            color: white; 
-            border: none; 
-            padding: 12px 28px; 
-            border-radius: 40px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            margin: 10px 5px;
-        }
-        .chat-block {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 24px;
-        }
-        .chat-poster {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-        }
-
-        .logo { display: block; max-width: 220px; margin: 0 auto 10px auto; }
-        h1 { font-size: 26px; font-weight: 800; text-align: center; color: #1a1a2e; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #555; margin-bottom: 25px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-
         .section-title {
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 15px;
             color: #1a1a2e;
-            text-align: center;
         }
 
-        .games-grid { display: flex; flex-direction: column; gap: 30px; margin-bottom: 30px; }
-        .game-card { background: white; border-radius: 24px; padding: 20px; border: 2px solid #e0e0e0; transition: all 0.2s; cursor: pointer; }
-        .game-card.selected { border-color: #2a5298; background: #f0f5ff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
-        .game-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #1a1a2e; }
-        .game-date { font-size: 14px; color: #666; margin-bottom: 15px; }
-        .game-image { 
-            width: 100%; 
-            max-width: 500px; 
-            border-radius: 20px; 
-            margin-top: 8px; 
-            background: #f0f0f0; 
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+        /* Для теста я скопировал одну форму с вопросами, она будет общей */
+        .common-form {
+            margin-top: 30px;
+            border-top: 2px dashed #ccc;
+            padding-top: 25px;
         }
-
-        .players-grid, .yesno-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 15px 0 20px 0; }
-        .player-btn, .yesno-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 10px 18px; border-radius: 40px; font-size: 16px; cursor: pointer; transition: all 0.2s; }
-        .player-btn.selected, .yesno-btn.selected { background: #2a5298; color: white; border-color: #2a5298; }
-        .question-title { font-weight: 700; margin: 15px 0 8px 0; font-size: 18px; }
-
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid #ccc; font-size: 16px; }
-        button[type="submit"] { width: 100%; padding: 16px; background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; border-radius: 40px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .status { margin-top: 15px; text-align: center; font-size: 14px; display: none; }
-        .status.success { color: green; display: block; }
-        .status.error { color: red; display: block; }
-        footer { text-align: center; margin-top: 25px; font-size: 12px; color: #aaa; }
-        .checkbox-group { display: flex; gap: 10px; margin: 15px 0; align-items: center; }
     </style>
 </head>
 <body>
-    <div class="form-container" id="formContainer">
-        <img class="logo" src="https://s10.iimage.su/s/12/gQkkx99xh34h8rqElhMDQv9V7q9vTFWk2DH15ETie.png" alt="Логотип Эйнштейн Party">
-        <h1>ЭЙНШТЕЙН PARTY</h1>
-        <div class="subtitle">Регистрация на игры</div>
-
-        <form id="quizForm">
-            <div class="section-title">📅 Выберите дату и игру</div>
-            <div class="games-grid" id="gamesGrid">
-                <div class="game-card" data-game-id="game1">
-                    <div class="game-title">🔢 Без букв</div>
-                    <div class="game-date">📅 14 мая (ЧТ), 19:30 · 📍 Раковарня</div>
-                    <img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер игры 1">
-                </div>
-                <div class="game-card" data-game-id="game2">
-                    <div class="game-title">🧡 Классика. Обо всём</div>
-                    <div class="game-date">📅 17 мая (ВС), 15:00 · 📍 Раковарня</div>
-                    <img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер игры 2">
-                </div>
-                <div class="game-card" data-game-id="game3">
-                    <div class="game-title">🌇 Битва городов</div>
-                    <div class="game-date">📅 21 мая (ЧТ), 19:30 · 📍 Раковарня</div>
-                    <img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер игры 3">
-                </div>
-                <div class="game-card" data-game-id="game4">
-                    <div class="game-title">⚽ Футбол: серия игр (2/4)</div>
-                    <div class="game-date">📅 28 мая (ЧТ), 19:30 · 📍 Раковарня</div>
-                    <img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер игры 4">
-                </div>
-                <div class="game-card" data-game-id="game5">
-                    <div class="game-title">🎶 Музыкальное лото</div>
-                    <div class="game-date">📅 31 мая (ВС), 16:00 · 📍 Типография</div>
-                    <img class="game-image" src="https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png" alt="Постер игры 5">
-                </div>
+<div class="test-container">
+    
+    <!-- ВАРИАНТ 1 -->
+    <div class="test-block variant-1">
+        <div class="test-title">📌 ВАРИАНТ 1: Левое выравнивание, чуть увеличенные афиши</div>
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-title">🔢 Без букв</div>
+                <div class="game-date">📅 14 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер игры 1">
             </div>
-
-            <div class="input-group">
-                <label>Название команды *</label>
-                <input type="text" id="teamName" required placeholder="например, Мозголомы">
+            <div class="game-card">
+                <div class="game-title">🧡 Классика. Обо всём</div>
+                <div class="game-date">📅 17 мая (ВС), 15:00 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер игры 2">
             </div>
-
-            <div class="question-title">👥 Количество игроков?</div>
-            <div class="players-grid" id="playersGrid"></div>
-            <input type="hidden" id="lookingForTeam" value="no">
-
-            <div id="dynamicQuestions"></div>
-
-            <div class="input-group">
-                <label>Контактный телефон</label>
-                <input type="tel" id="phone" placeholder="+7 999 123-45-67">
+            <div class="game-card">
+                <div class="game-title">🌇 Битва городов</div>
+                <div class="game-date">📅 21 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер игры 3">
             </div>
-            <div class="input-group">
-                <label>Ссылка на ВК (или Telegram) капитана *</label>
-                <input type="text" id="contact" required placeholder="https://vk.com/... или @username">
+            <div class="game-card">
+                <div class="game-title">⚽ Футбол: серия игр (2/4)</div>
+                <div class="game-date">📅 28 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер игры 4">
             </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="consent" required>
-                <label>Я согласен(на) на обработку персональных данных</label>
+            <div class="game-card">
+                <div class="game-title">🎶 Музыкальное лото</div>
+                <div class="game-date">📅 31 мая (ВС), 16:00 · Типография</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png" alt="Постер игры 5">
             </div>
-
-            <button type="submit">ЗАРЕГИСТРИРОВАТЬСЯ 🚀</button>
-            <div id="statusMessage" class="status"></div>
-        </form>
-        <footer>Данные попадают в Google-таблицу. Мы не спамим ❤️</footer>
+        </div>
     </div>
 
-    <div class="thank-you" id="thankYou">
-        <h2>🎉 Спасибо за регистрацию!</h2>
-        <p>Мы свяжемся с вами в день игры.</p>
-        <!-- Здесь будет дополнительный блок для "Ищу команду" -->
-        <button onclick="window.location.href='https://vk.com/einsteinparty_nsk'">Вернуться в сообщество</button>
+    <!-- ВАРИАНТ 2 -->
+    <div class="test-block variant-2">
+        <div class="test-title">🧱 ВАРИАНТ 2: Кирпичная кладка (по 2 игры в строке)</div>
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-title">🔢 Без букв</div>
+                <div class="game-date">📅 14 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер игры 1">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🧡 Классика. Обо всём</div>
+                <div class="game-date">📅 17 мая (ВС), 15:00 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер игры 2">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🌇 Битва городов</div>
+                <div class="game-date">📅 21 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер игры 3">
+            </div>
+            <div class="game-card">
+                <div class="game-title">⚽ Футбол: серия игр (2/4)</div>
+                <div class="game-date">📅 28 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер игры 4">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🎶 Музыкальное лото</div>
+                <div class="game-date">📅 31 мая (ВС), 16:00 · Типография</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png" alt="Постер игры 5">
+            </div>
+        </div>
     </div>
 
-    <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpbt43m1UlkFxPdF007Ui8tc-W2bWsf-yihBrmM2mCRhIoJQxNzv4PgYDuJ_J3GvhlqA/exec';
-        const gameCards = document.querySelectorAll('.game-card');
-        gameCards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (!e.target.closest('.game-card')) return;
-                card.classList.toggle('selected');
-            });
-        });
+    <!-- ВАРИАНТ 3 -->
+    <div class="test-block variant-3">
+        <div class="test-title">🎠 ВАРИАНТ 3: Карусель (листайте вправо →)</div>
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-title">🔢 Без букв</div>
+                <div class="game-date">📅 14 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер игры 1">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🧡 Классика. Обо всём</div>
+                <div class="game-date">📅 17 мая (ВС), 15:00 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер игры 2">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🌇 Битва городов</div>
+                <div class="game-date">📅 21 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер игры 3">
+            </div>
+            <div class="game-card">
+                <div class="game-title">⚽ Футбол: серия игр (2/4)</div>
+                <div class="game-date">📅 28 мая (ЧТ), 19:30 · Раковарня</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер игры 4">
+            </div>
+            <div class="game-card">
+                <div class="game-title">🎶 Музыкальное лото</div>
+                <div class="game-date">📅 31 мая (ВС), 16:00 · Типография</div>
+                <img class="game-image" src="https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png" alt="Постер игры 5">
+            </div>
+        </div>
+    </div>
 
-        const playersGrid = document.getElementById('playersGrid');
-        let selectedPlayers = null;
-        let isLookingForTeam = false;
-        let acceptOthers = null;
-        let hasBirthday = null;
+    <!-- ЕДИНАЯ ФОРМА С ВОПРОСАМИ (пример, без отправки в таблицу, только для теста взаимодействия) -->
+    <div class="test-block common-form">
+        <div class="test-title">📋 Единая форма для всех вариантов (тест логики вопросов)</div>
 
-        function buildPlayersGrid() {
-            playersGrid.innerHTML = '';
-            for (let i = 2; i <= 10; i++) {
-                const btn = document.createElement('div');
-                btn.className = 'player-btn';
-                btn.innerText = i;
-                btn.dataset.val = i;
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    selectedPlayers = i;
-                    isLookingForTeam = false;
-                    document.getElementById('lookingForTeam').value = 'no';
-                    updateDynamicQuestions();
-                });
-                playersGrid.appendChild(btn);
-            }
-            const lookingBtn = document.createElement('div');
-            lookingBtn.className = 'player-btn';
-            lookingBtn.innerText = '🤝 Ищу команду';
-            lookingBtn.addEventListener('click', () => {
+        <div class="input-group">
+            <label>Название команды *</label>
+            <input type="text" id="teamName" placeholder="например, Мозголомы">
+        </div>
+
+        <div class="question-title">👥 Количество игроков?</div>
+        <div class="players-grid" id="playersGrid">
+            <!-- JS добавит кнопки 2–10 и "Ищу команду" -->
+        </div>
+        <input type="hidden" id="lookingForTeam" value="no">
+
+        <!-- Динамические вопросы -->
+        <div id="dynamicQuestions"></div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="consent">
+            <label>Я согласен(на) на обработку персональных данных</label>
+        </div>
+        <button type="button" id="testBtn" style="background: orange; margin-top: 10px;">Проверить логику (без отправки)</button>
+        <div id="testMessage" style="margin-top: 15px; font-weight: bold;"></div>
+    </div>
+</div>
+
+<script>
+    // Генерация кнопок выбора количества игроков
+    const playersGrid = document.getElementById('playersGrid');
+    let selectedPlayers = null;
+    let isLookingForTeam = false;
+    let acceptOthers = null;
+    let hasBirthday = null;
+    let hasFreePass = null;
+    let freePassCount = null;
+
+    function buildPlayersGrid() {
+        playersGrid.innerHTML = '';
+        for (let i = 2; i <= 10; i++) {
+            const btn = document.createElement('div');
+            btn.className = 'player-btn';
+            btn.innerText = i;
+            btn.dataset.val = i;
+            btn.addEventListener('click', () => {
                 document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
-                lookingBtn.classList.add('selected');
-                selectedPlayers = null;
-                isLookingForTeam = true;
-                document.getElementById('lookingForTeam').value = 'yes';
+                btn.classList.add('selected');
+                selectedPlayers = i;
+                isLookingForTeam = false;
+                document.getElementById('lookingForTeam').value = 'no';
                 updateDynamicQuestions();
             });
-            playersGrid.appendChild(lookingBtn);
+            playersGrid.appendChild(btn);
         }
-
-        const dynamicDiv = document.getElementById('dynamicQuestions');
-        function updateDynamicQuestions() {
-            dynamicDiv.innerHTML = '';
-            acceptOthers = null;
-            hasBirthday = null;
-
-            // Вопрос про именинника (всегда)
-            const birthdayQuestion = document.createElement('div');
-            birthdayQuestion.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
-            const bdayBtnDiv = document.createElement('div');
-            bdayBtnDiv.className = 'yesno-grid';
-            const yesBday = document.createElement('div');
-            yesBday.className = 'yesno-btn';
-            yesBday.innerText = 'Да';
-            const noBday = document.createElement('div');
-            noBday.className = 'yesno-btn';
-            noBday.innerText = 'Нет';
-            const setBday = (val) => {
-                hasBirthday = val;
-                yesBday.classList.toggle('selected', val === true);
-                noBday.classList.toggle('selected', val === false);
-            };
-            yesBday.onclick = () => setBday(true);
-            noBday.onclick = () => setBday(false);
-            bdayBtnDiv.appendChild(yesBday);
-            bdayBtnDiv.appendChild(noBday);
-            birthdayQuestion.appendChild(bdayBtnDiv);
-            dynamicDiv.appendChild(birthdayQuestion);
-
-            // Вопрос про принятие других (только если выбрана команда 2-10 человек)
-            if (!isLookingForTeam && selectedPlayers) {
-                const acceptQuestion = document.createElement('div');
-                acceptQuestion.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
-                const acceptBtnDiv = document.createElement('div');
-                acceptBtnDiv.className = 'yesno-grid';
-                const yesAccept = document.createElement('div');
-                yesAccept.className = 'yesno-btn';
-                yesAccept.innerText = 'Да';
-                const noAccept = document.createElement('div');
-                noAccept.className = 'yesno-btn';
-                noAccept.innerText = 'Нет';
-                const setAccept = (val) => {
-                    acceptOthers = val;
-                    yesAccept.classList.toggle('selected', val === true);
-                    noAccept.classList.toggle('selected', val === false);
-                };
-                yesAccept.onclick = () => setAccept(true);
-                noAccept.onclick = () => setAccept(false);
-                acceptBtnDiv.appendChild(yesAccept);
-                acceptBtnDiv.appendChild(noAccept);
-                acceptQuestion.appendChild(acceptBtnDiv);
-                dynamicDiv.appendChild(acceptQuestion);
-            }
-        }
-
-        buildPlayersGrid();
-        updateDynamicQuestions();
-
-        const form = document.getElementById('quizForm');
-        const statusDiv = document.getElementById('statusMessage');
-        const formContainer = document.getElementById('formContainer');
-        const thankYouDiv = document.getElementById('thankYou');
-
-        // Функция для добавления блока чата, если ищут команду
-        function addChatBlock() {
-            const existing = thankYouDiv.querySelector('.chat-block');
-            if (existing) existing.remove();
-            
-            const chatBlock = document.createElement('div');
-            chatBlock.className = 'chat-block';
-            chatBlock.innerHTML = `
-                <img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат для поиска команды">
-                <p style="font-size: 18px; margin-bottom: 15px;">Не с кем сходить на квиз? Тогда переходите в наш чат, где вы точно найдете команду!</p>
-                <button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>
-            `;
-            // Вставляем блок перед последней кнопкой (Вернуться в сообщество)
-            const backButton = thankYouDiv.querySelector('button:last-child');
-            thankYouDiv.insertBefore(chatBlock, backButton);
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const selectedGames = Array.from(document.querySelectorAll('.game-card.selected'))
-                .map(card => ({ title: card.querySelector('.game-title')?.innerText || '', date: card.querySelector('.game-date')?.innerText || '' }));
-            if (selectedGames.length === 0) {
-                statusDiv.textContent = '❌ Выберите хотя бы одну игру';
-                statusDiv.className = 'status error';
-                setTimeout(() => statusDiv.className = 'status', 3000);
-                return;
-            }
-
-            const teamName = document.getElementById('teamName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const contact = document.getElementById('contact').value.trim();
-            const consent = document.getElementById('consent').checked;
-            if (!teamName || !contact) {
-                statusDiv.textContent = '❌ Заполните название команды и контакт капитана';
-                statusDiv.className = 'status error';
-                setTimeout(() => statusDiv.className = 'status', 3000);
-                return;
-            }
-            if (!consent) {
-                statusDiv.textContent = '❌ Необходимо согласие на обработку данных';
-                statusDiv.className = 'status error';
-                setTimeout(() => statusDiv.className = 'status', 3000);
-                return;
-            }
-
-            const gamesText = selectedGames.map(g => `${g.title} (${g.date})`).join('; ');
-            const finalPlayers = isLookingForTeam ? 'Ищу команду' : selectedPlayers;
-            const acceptOthersText = (acceptOthers === null ? '' : (acceptOthers ? 'Да' : 'Нет'));
-            const birthdayText = (hasBirthday === null ? '' : (hasBirthday ? 'Да' : 'Нет'));
-
-            statusDiv.textContent = '⏳ Отправка...';
-            statusDiv.className = 'status';
-
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        teamName, members: finalPlayers, acceptOthers: acceptOthersText,
-                        hasBirthday: birthdayText, gamesList: gamesText, phone, contact,
-                        timestamp: new Date().toLocaleString()
-                    })
-                });
-                
-                // Если человек выбрал "Ищу команду", добавляем блок с чатом
-                if (isLookingForTeam) {
-                    addChatBlock();
-                } else {
-                    // Удаляем блок чата, если он был
-                    const existing = thankYouDiv.querySelector('.chat-block');
-                    if (existing) existing.remove();
-                }
-                
-                formContainer.classList.add('hidden');
-                thankYouDiv.classList.add('show');
-            } catch (error) {
-                statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
-                statusDiv.className = 'status error';
-                setTimeout(() => statusDiv.className = 'status', 3000);
-                console.error(error);
-            }
+        const lookingBtn = document.createElement('div');
+        lookingBtn.className = 'player-btn';
+        lookingBtn.innerText = '🤝 Ищу команду';
+        lookingBtn.addEventListener('click', () => {
+            document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
+            lookingBtn.classList.add('selected');
+            selectedPlayers = null;
+            isLookingForTeam = true;
+            document.getElementById('lookingForTeam').value = 'yes';
+            updateDynamicQuestions();
         });
-    </script>
+        playersGrid.appendChild(lookingBtn);
+    }
+
+    function updateDynamicQuestions() {
+        const dynamicDiv = document.getElementById('dynamicQuestions');
+        dynamicDiv.innerHTML = '';
+        acceptOthers = null;
+        hasBirthday = null;
+        hasFreePass = null;
+        freePassCount = null;
+
+        // 1. Вопрос "Готовы принять людей?" (только если выбрана команда 2-10, НЕ "Ищу команду")
+        if (!isLookingForTeam && selectedPlayers) {
+            const acceptDiv = document.createElement('div');
+            acceptDiv.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
+            const btnDiv = document.createElement('div');
+            btnDiv.className = 'yesno-grid';
+            const yesBtn = document.createElement('div');
+            yesBtn.className = 'yesno-btn';
+            yesBtn.innerText = 'Да';
+            const noBtn = document.createElement('div');
+            noBtn.className = 'yesno-btn';
+            noBtn.innerText = 'Нет';
+            const setAccept = (val) => {
+                acceptOthers = val;
+                document.querySelectorAll('#dynamicQuestions .yesno-btn').forEach(b => b.classList.remove('selected'));
+                if (val === true) yesBtn.classList.add('selected');
+                else noBtn.classList.add('selected');
+            };
+            yesBtn.onclick = () => setAccept(true);
+            noBtn.onclick = () => setAccept(false);
+            btnDiv.appendChild(yesBtn);
+            btnDiv.appendChild(noBtn);
+            acceptDiv.appendChild(btnDiv);
+            dynamicDiv.appendChild(acceptDiv);
+        }
+
+        // 2. Вопрос про именинника (всегда)
+        const birthdayDiv = document.createElement('div');
+        birthdayDiv.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
+        const bdayBtnDiv = document.createElement('div');
+        bdayBtnDiv.className = 'yesno-grid';
+        const yesBday = document.createElement('div');
+        yesBday.className = 'yesno-btn';
+        yesBday.innerText = 'Да';
+        const noBday = document.createElement('div');
+        noBday.className = 'yesno-btn';
+        noBday.innerText = 'Нет';
+        const setBday = (val) => {
+            hasBirthday = val;
+            if (val === true) yesBday.classList.add('selected');
+            else noBday.classList.add('selected');
+        };
+        yesBday.onclick = () => setBday(true);
+        noBday.onclick = () => setBday(false);
+        bdayBtnDiv.appendChild(yesBday);
+        bdayBtnDiv.appendChild(noBday);
+        birthdayDiv.appendChild(bdayBtnDiv);
+        dynamicDiv.appendChild(birthdayDiv);
+
+        // 3. Вопрос про бесплатные проходки (всегда)
+        const freePassDiv = document.createElement('div');
+        freePassDiv.innerHTML = `<div class="question-title">🎫 Есть ли у вас бесплатные проходки?</div>`;
+        const fpBtnDiv = document.createElement('div');
+        fpBtnDiv.className = 'yesno-grid';
+        const yesFp = document.createElement('div');
+        yesFp.className = 'yesno-btn';
+        yesFp.innerText = 'Да';
+        const noFp = document.createElement('div');
+        noFp.className = 'yesno-btn';
+        noFp.innerText = 'Нет';
+        const countInput = document.createElement('input');
+        countInput.type = 'text';
+        countInput.placeholder = 'Сколько? (свободная форма)';
+        countInput.style.marginTop = '10px';
+        countInput.style.display = 'none';
+
+        const setFreePass = (val) => {
+            hasFreePass = val;
+            if (val === true) {
+                yesFp.classList.add('selected');
+                countInput.style.display = 'block';
+            } else {
+                noFp.classList.add('selected');
+                countInput.style.display = 'none';
+                freePassCount = null;
+            }
+        };
+        yesFp.onclick = () => setFreePass(true);
+        noFp.onclick = () => setFreePass(false);
+        countInput.addEventListener('input', (e) => { freePassCount = e.target.value; });
+
+        fpBtnDiv.appendChild(yesFp);
+        fpBtnDiv.appendChild(noFp);
+        freePassDiv.appendChild(fpBtnDiv);
+        freePassDiv.appendChild(countInput);
+        dynamicDiv.appendChild(freePassDiv);
+    }
+
+    buildPlayersGrid();
+    updateDynamicQuestions();
+
+    document.getElementById('testBtn').addEventListener('click', () => {
+        const msg = document.getElementById('testMessage');
+        const team = document.getElementById('teamName').value.trim() || '(не заполнено)';
+        msg.innerHTML = `✅ Логика работает. Название команды: ${team}<br>
+        👥 Количество: ${isLookingForTeam ? 'Ищу команду' : (selectedPlayers || 'не выбрано')}<br>
+        🤝 Принять людей: ${acceptOthers === null ? 'не отвечено' : (acceptOthers ? 'Да' : 'Нет')}<br>
+        🎂 Именинник: ${hasBirthday === null ? 'не отвечено' : (hasBirthday ? 'Да' : 'Нет')}<br>
+        🎫 Бесплатные проходки: ${hasFreePass === null ? 'не отвечено' : (hasFreePass ? 'Да' : 'Нет')} ${freePassCount ? `(количество: ${freePassCount})` : ''}`;
+    });
+</script>
 </body>
 </html>

@@ -46,20 +46,60 @@
         .form-container.hidden { display: none; }
         .thank-you { text-align: center; display: none; background: rgba(255, 255, 255, 0.97); }
         .thank-you.show { display: block; }
+
         .thank-you h2 { font-size: 28px; margin-bottom: 15px; color: #1e3c72; }
         .thank-you p { font-size: 18px; margin-bottom: 25px; }
-        .thank-you button { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 12px 28px; border-radius: 40px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .thank-you button { 
+            background: linear-gradient(135deg, #1e3c72, #2a5298); 
+            color: white; 
+            border: none; 
+            padding: 12px 28px; 
+            border-radius: 40px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin: 10px 5px;
+        }
+        .chat-block {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 24px;
+        }
+        .chat-poster {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
 
         .logo { display: block; max-width: 220px; margin: 0 auto 10px auto; }
         h1 { font-size: 26px; font-weight: 800; text-align: center; color: #1a1a2e; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #555; margin-bottom: 25px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1a1a2e;
+            text-align: center;
+        }
 
         .games-grid { display: flex; flex-direction: column; gap: 30px; margin-bottom: 30px; }
         .game-card { background: white; border-radius: 24px; padding: 20px; border: 2px solid #e0e0e0; transition: all 0.2s; cursor: pointer; }
         .game-card.selected { border-color: #2a5298; background: #f0f5ff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
         .game-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #1a1a2e; }
         .game-date { font-size: 14px; color: #666; margin-bottom: 15px; }
-        .game-image { width: 100%; border-radius: 20px; margin-top: 8px; background: #f0f0f0; display: block; }
+        .game-image { 
+            width: 100%; 
+            max-width: 500px; 
+            border-radius: 20px; 
+            margin-top: 8px; 
+            background: #f0f0f0; 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         .players-grid, .yesno-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 15px 0 20px 0; }
         .player-btn, .yesno-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 10px 18px; border-radius: 40px; font-size: 16px; cursor: pointer; transition: all 0.2s; }
@@ -81,9 +121,10 @@
     <div class="form-container" id="formContainer">
         <img class="logo" src="https://s10.iimage.su/s/12/gQkkx99xh34h8rqElhMDQv9V7q9vTFWk2DH15ETie.png" alt="Логотип Эйнштейн Party">
         <h1>ЭЙНШТЕЙН PARTY</h1>
-        <div class="subtitle">Выберите игры и зарегистрируйте команду</div>
+        <div class="subtitle">Регистрация на игры</div>
 
         <form id="quizForm">
+            <div class="section-title">📅 Выберите дату и игру</div>
             <div class="games-grid" id="gamesGrid">
                 <div class="game-card" data-game-id="game1">
                     <div class="game-title">🔢 Без букв</div>
@@ -91,7 +132,7 @@
                     <img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер игры 1">
                 </div>
                 <div class="game-card" data-game-id="game2">
-                    <div class="game-title">🧡Классика. Обо всём</div>
+                    <div class="game-title">🧡 Классика. Обо всём</div>
                     <div class="game-date">📅 17 мая (ВС), 15:00 · 📍 Раковарня</div>
                     <img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер игры 2">
                 </div>
@@ -101,7 +142,7 @@
                     <img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер игры 3">
                 </div>
                 <div class="game-card" data-game-id="game4">
-                    <div class="game-title">👉🏻 Футбол: серия игра (2/4)</div>
+                    <div class="game-title">⚽ Футбол: серия игр (2/4)</div>
                     <div class="game-date">📅 28 мая (ЧТ), 19:30 · 📍 Раковарня</div>
                     <img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер игры 4">
                 </div>
@@ -112,15 +153,17 @@
                 </div>
             </div>
 
-            <div class="question-title">👥 Сколько вас?</div>
-            <div class="players-grid" id="playersGrid"></div>
-            <input type="hidden" id="lookingForTeam" value="no">
-            <div id="dynamicQuestions"></div>
-
             <div class="input-group">
                 <label>Название команды *</label>
                 <input type="text" id="teamName" required placeholder="например, Мозголомы">
             </div>
+
+            <div class="question-title">👥 Количество игроков?</div>
+            <div class="players-grid" id="playersGrid"></div>
+            <input type="hidden" id="lookingForTeam" value="no">
+
+            <div id="dynamicQuestions"></div>
+
             <div class="input-group">
                 <label>Контактный телефон</label>
                 <input type="tel" id="phone" placeholder="+7 999 123-45-67">
@@ -143,6 +186,7 @@
     <div class="thank-you" id="thankYou">
         <h2>🎉 Спасибо за регистрацию!</h2>
         <p>Мы свяжемся с вами в день игры.</p>
+        <!-- Здесь будет дополнительный блок для "Ищу команду" -->
         <button onclick="window.location.href='https://vk.com/einsteinparty_nsk'">Вернуться в сообщество</button>
     </div>
 
@@ -199,81 +243,52 @@
             acceptOthers = null;
             hasBirthday = null;
 
+            // Вопрос про именинника (всегда)
+            const birthdayQuestion = document.createElement('div');
+            birthdayQuestion.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
+            const bdayBtnDiv = document.createElement('div');
+            bdayBtnDiv.className = 'yesno-grid';
+            const yesBday = document.createElement('div');
+            yesBday.className = 'yesno-btn';
+            yesBday.innerText = 'Да';
+            const noBday = document.createElement('div');
+            noBday.className = 'yesno-btn';
+            noBday.innerText = 'Нет';
+            const setBday = (val) => {
+                hasBirthday = val;
+                yesBday.classList.toggle('selected', val === true);
+                noBday.classList.toggle('selected', val === false);
+            };
+            yesBday.onclick = () => setBday(true);
+            noBday.onclick = () => setBday(false);
+            bdayBtnDiv.appendChild(yesBday);
+            bdayBtnDiv.appendChild(noBday);
+            birthdayQuestion.appendChild(bdayBtnDiv);
+            dynamicDiv.appendChild(birthdayQuestion);
+
+            // Вопрос про принятие других (только если выбрана команда 2-10 человек)
             if (!isLookingForTeam && selectedPlayers) {
-                const q1 = document.createElement('div');
-                q1.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
-                const btnDiv = document.createElement('div');
-                btnDiv.className = 'yesno-grid';
-                const yesBtn = document.createElement('div');
-                yesBtn.className = 'yesno-btn';
-                yesBtn.innerText = 'Да';
-                const noBtn = document.createElement('div');
-                noBtn.className = 'yesno-btn';
-                noBtn.innerText = 'Нет';
+                const acceptQuestion = document.createElement('div');
+                acceptQuestion.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
+                const acceptBtnDiv = document.createElement('div');
+                acceptBtnDiv.className = 'yesno-grid';
+                const yesAccept = document.createElement('div');
+                yesAccept.className = 'yesno-btn';
+                yesAccept.innerText = 'Да';
+                const noAccept = document.createElement('div');
+                noAccept.className = 'yesno-btn';
+                noAccept.innerText = 'Нет';
                 const setAccept = (val) => {
                     acceptOthers = val;
-                    yesBtn.classList.toggle('selected', val === true);
-                    noBtn.classList.toggle('selected', val === false);
-                    renderBirthdayQuestion();
+                    yesAccept.classList.toggle('selected', val === true);
+                    noAccept.classList.toggle('selected', val === false);
                 };
-                yesBtn.onclick = () => setAccept(true);
-                noBtn.onclick = () => setAccept(false);
-                btnDiv.appendChild(yesBtn);
-                btnDiv.appendChild(noBtn);
-                q1.appendChild(btnDiv);
-                dynamicDiv.appendChild(q1);
-                let renderBirthdayQuestion = () => {};
-                renderBirthdayQuestion = () => {
-                    const existing = dynamicDiv.querySelector('.birthday-block');
-                    if (existing) existing.remove();
-                    if (acceptOthers !== null) {
-                        const bdayDiv = document.createElement('div');
-                        bdayDiv.className = 'birthday-block';
-                        bdayDiv.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
-                        const bdayBtnDiv = document.createElement('div');
-                        bdayBtnDiv.className = 'yesno-grid';
-                        const yesBday = document.createElement('div');
-                        yesBday.className = 'yesno-btn';
-                        yesBday.innerText = 'Да';
-                        const noBday = document.createElement('div');
-                        noBday.className = 'yesno-btn';
-                        noBday.innerText = 'Нет';
-                        const setBday = (val) => {
-                            hasBirthday = val;
-                            yesBday.classList.toggle('selected', val === true);
-                            noBday.classList.toggle('selected', val === false);
-                        };
-                        yesBday.onclick = () => setBday(true);
-                        noBday.onclick = () => setBday(false);
-                        bdayBtnDiv.appendChild(yesBday);
-                        bdayBtnDiv.appendChild(noBday);
-                        bdayDiv.appendChild(bdayBtnDiv);
-                        dynamicDiv.appendChild(bdayDiv);
-                    }
-                };
-                renderBirthdayQuestion();
-            } else if (isLookingForTeam) {
-                const bdayDiv = document.createElement('div');
-                bdayDiv.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
-                const btnDiv = document.createElement('div');
-                btnDiv.className = 'yesno-grid';
-                const yesBtn = document.createElement('div');
-                yesBtn.className = 'yesno-btn';
-                yesBtn.innerText = 'Да';
-                const noBtn = document.createElement('div');
-                noBtn.className = 'yesno-btn';
-                noBtn.innerText = 'Нет';
-                const setBday = (val) => {
-                    hasBirthday = val;
-                    yesBtn.classList.toggle('selected', val === true);
-                    noBtn.classList.toggle('selected', val === false);
-                };
-                yesBtn.onclick = () => setBday(true);
-                noBtn.onclick = () => setBday(false);
-                btnDiv.appendChild(yesBtn);
-                btnDiv.appendChild(noBtn);
-                bdayDiv.appendChild(btnDiv);
-                dynamicDiv.appendChild(bdayDiv);
+                yesAccept.onclick = () => setAccept(true);
+                noAccept.onclick = () => setAccept(false);
+                acceptBtnDiv.appendChild(yesAccept);
+                acceptBtnDiv.appendChild(noAccept);
+                acceptQuestion.appendChild(acceptBtnDiv);
+                dynamicDiv.appendChild(acceptQuestion);
             }
         }
 
@@ -284,6 +299,23 @@
         const statusDiv = document.getElementById('statusMessage');
         const formContainer = document.getElementById('formContainer');
         const thankYouDiv = document.getElementById('thankYou');
+
+        // Функция для добавления блока чата, если ищут команду
+        function addChatBlock() {
+            const existing = thankYouDiv.querySelector('.chat-block');
+            if (existing) existing.remove();
+            
+            const chatBlock = document.createElement('div');
+            chatBlock.className = 'chat-block';
+            chatBlock.innerHTML = `
+                <img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат для поиска команды">
+                <p style="font-size: 18px; margin-bottom: 15px;">Не с кем сходить на квиз? Тогда переходите в наш чат, где вы точно найдете команду!</p>
+                <button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>
+            `;
+            // Вставляем блок перед последней кнопкой (Вернуться в сообщество)
+            const backButton = thankYouDiv.querySelector('button:last-child');
+            thankYouDiv.insertBefore(chatBlock, backButton);
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -333,6 +365,16 @@
                         timestamp: new Date().toLocaleString()
                     })
                 });
+                
+                // Если человек выбрал "Ищу команду", добавляем блок с чатом
+                if (isLookingForTeam) {
+                    addChatBlock();
+                } else {
+                    // Удаляем блок чата, если он был
+                    const existing = thankYouDiv.querySelector('.chat-block');
+                    if (existing) existing.remove();
+                }
+                
                 formContainer.classList.add('hidden');
                 thankYouDiv.classList.add('show');
             } catch (error) {

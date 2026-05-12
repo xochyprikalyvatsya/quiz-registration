@@ -17,7 +17,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #E63349, #E95233, #F2922E, #F9B224);
             min-height: 100vh;
         }
 
@@ -42,7 +42,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
             z-index: 1;
         }
 
@@ -75,10 +75,7 @@
 
         /* ОСНОВНОЙ КОНТЕЙНЕР (ФОРМА) */
         .form-wrapper {
-            background-image: url('https://s10.iimage.su/s/12/giEDAXOxrm1rfHpZwnbo7nY8VZZG0jJcqZVepbbFO.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background: rgba(0, 0, 0, 0.2);
             padding: 60px 20px;
         }
 
@@ -92,13 +89,14 @@
         }
 
         .thank-you {
-            max-width: 600px;
+            max-width: 1000px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.96);
             border-radius: 40px;
-            padding: 40px 30px;
+            padding: 40px 35px;
             text-align: center;
             display: none;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
         }
         .thank-you.show { display: block; }
         .thank-you h2 { font-size: 28px; margin-bottom: 15px; color: #22212F; }
@@ -299,7 +297,7 @@
             });
         });
 
-        // --- КОЛИЧЕСТВО ИГРОКОВ (без автоскроллов, кроме кнопки "Начать регистрацию") ---
+        // --- КОЛИЧЕСТВО ИГРОКОВ ---
         const playersGrid = document.getElementById('playersGrid');
         let selectedPlayers = null, isLookingForTeam = false, acceptOthers = null, hasBirthday = null, hasFreePass = null, freePassCount = '';
 
@@ -375,7 +373,7 @@
 
         buildPlayersGrid(); updateDynamicQuestions();
 
-        // Отправка формы
+        // --- ОТПРАВКА ФОРМЫ (ИСПРАВЛЕННАЯ) ---
         const form = document.getElementById('quizForm');
         const statusDiv = document.getElementById('statusMessage');
         const formContainer = document.getElementById('formContainer');
@@ -392,23 +390,87 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const selectedGames = Array.from(document.querySelectorAll('.game-card-wrapper.selected')).map(wrapper => {
+
+            // 1. Проверка выбора игр
+            const selectedWrappers = document.querySelectorAll('.game-card-wrapper.selected');
+            if (selectedWrappers.length === 0) {
+                statusDiv.textContent = '❌ Выберите хотя бы одну игру';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+
+            // 2. Формируем список выбранных игр
+            const selectedGames = Array.from(selectedWrappers).map(wrapper => {
                 const title = wrapper.querySelector('.game-title')?.innerText || '';
                 const date = wrapper.querySelector('.game-date')?.innerText || '';
                 return `${title} (${date})`;
             }).join('; ');
-            if (!selectedGames) { statusDiv.textContent = '❌ Выберите хотя бы одну игру'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
-            const teamName = document.getElementById('teamName').value.trim(); const email = document.getElementById('email').value.trim(); const consent = document.getElementById('consent').checked;
-            if (!teamName || !email) { statusDiv.textContent = '❌ Заполните название команды и электронную почту'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
-            if (!consent) { statusDiv.textContent = '❌ Необходимо согласие на обработку данных'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
-            const finalPlayers = isLookingForTeam ? 'Ищу команду' : selectedPlayers;
-            const body = { teamName, players: finalPlayers, acceptOthers: acceptOthers !== null ? (acceptOthers ? 'Да' : 'Нет') : '', hasBirthday: hasBirthday !== null ? (hasBirthday ? 'Да' : 'Нет') : '', freePass: hasFreePass ? `Да (${freePassCount})` : (hasFreePass === false ? 'Нет' : ''), selectedGames, phone: document.getElementById('phone').value.trim(), email, autoVkLink, timestamp: new Date().toLocaleString() };
-            statusDiv.textContent = '⏳ Отправка...'; statusDiv.className = 'status';
+
+            // 3. Остальные поля
+            const teamName = document.getElementById('teamName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const consent = document.getElementById('consent').checked;
+
+            if (!teamName || !email) {
+                statusDiv.textContent = '❌ Заполните название команды и электронную почту';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+            if (!consent) {
+                statusDiv.textContent = '❌ Необходимо согласие на обработку данных';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+
+            const finalPlayers = isLookingForTeam ? 'Ищу команду' : (selectedPlayers ? selectedPlayers.toString() : '');
+
+            // 4. Данные для отправки
+            const formData = {
+                teamName: teamName,
+                players: finalPlayers,
+                acceptOthers: acceptOthers !== null ? (acceptOthers ? 'Да' : 'Нет') : '',
+                hasBirthday: hasBirthday !== null ? (hasBirthday ? 'Да' : 'Нет') : '',
+                freePass: hasFreePass ? `Да (${freePassCount})` : (hasFreePass === false ? 'Нет' : ''),
+                selectedGames: selectedGames,
+                phone: phone,
+                email: email,
+                autoVkLink: autoVkLink,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Отладка в консоль (можно посмотреть F12)
+            console.log('Отправляемые данные:', formData);
+
+            statusDiv.textContent = '⏳ Отправка...';
+            statusDiv.className = 'status';
+
             try {
-                await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-                if (isLookingForTeam) addChatBlock();
-                formContainer.classList.add('hidden'); thankYouDiv.classList.add('show');
-            } catch (err) { statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); }
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                console.log('Ответ сервера:', result);
+
+                if (result.result === 'success') {
+                    if (isLookingForTeam) addChatBlock();
+                    formContainer.classList.add('hidden');
+                    thankYouDiv.classList.add('show');
+                } else {
+                    throw new Error(result.error || 'Неизвестная ошибка');
+                }
+            } catch (err) {
+                console.error('Ошибка при отправке:', err);
+                statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+            }
         });
     </script>
 </body>

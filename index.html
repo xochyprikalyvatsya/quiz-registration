@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Регистрация на квиз | Эйнштейн Party</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .games-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            display: flex;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .game-card.selected {
+            border-color: #2a5298;
+            background: #f0f5ff;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.2);
+        }
+
+        .game-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .game-info {
+            flex: 1;
+        }
+
+        .game-title {
+            font-weight: 800;
+            font-size: 18px;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+
+        .game-details {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .game-difficulty {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: #e0e0e0;
+            color: #333;
+            display: inline-block;
+        }
+
+        .game-description {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .check-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .game-card.selected .check-icon {
+            background: #2a5298;
+            border-color: #2a5298;
+            content: "✓";
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            font-size: 16px;
+            background: #f9f9ff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.01);
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        @media (max-width: 550px) {
+            .game-card {
+                flex-wrap: wrap;
+            }
+            .game-image {
+                width: 100%;
+                height: 120px;
+            }
+            .check-icon {
+                position: absolute;
+                right: 15px;
+                top: 15px;
+            }
+            .game-card {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>🧠 ЭЙНШТЕЙН PARTY</h1>
+        <div class="subtitle">Выберите игры и зарегистрируйте команду</div>
+
+        <form id="quizForm">
+            <div class="games-grid" id="gamesGrid">
+                <!-- ИГРА 1 - замените картинку, название, сложность, описание -->
+                <div class="game-card" data-game-id="game1">
+                    <img class="game-image" src="https://t.me/c/3651604363/2" alt="Постер игры">
+                    <div class="game-info">
+                        <div class="game-title">🎭 Литературный баттл</div>
+                        <div class="game-details">
+                            <span class="game-difficulty">⭐ Сложность: 7/10</span>
+                        </div>
+                        <div class="game-description">Гарри Поттер, Достоевский и современные бестселлеры в одном флаконе.</div>
+                    </div>
+                    <div class="check-icon"></div>
+                </div>
+
+                <!-- ИГРА 2 - замените картинку, название, сложность, описание -->
+                <div class="game-card" data-game-id="game2">
+                    <img class="game-image" src="https://t.me/c/3651604363/2" alt="Постер игры">
+                    <div class="game-info">
+                        <div class="game-title">🎵 Музыкальный караоке-баттл</div>
+                        <div class="game-details">
+                            <span class="game-difficulty">⭐ Сложность: 5/10</span>
+                        </div>
+                        <div class="game-description">Угадай хит 90-х по трём нотам, подпевай и забери приз.</div>
+                    </div>
+                    <div class="check-icon"></div>
+                </div>
+
+                <!-- ИГРА 3 - замените картинку, название, сложность, описание -->
+                <div class="game-card" data-game-id="game3">
+                    <img class="game-image" src="https://t.me/c/3651604363/2" alt="Постер игры">
+                    <div class="game-info">
+                        <div class="game-title">🎬 Киноквиз: Оскар — 2025</div>
+                        <div class="game-details">
+                            <span class="game-difficulty">⭐ Сложность: 6/10</span>
+                        </div>
+                        <div class="game-description">Лучшие фильмы года, цитаты, режиссёры. Кто смотрел всё — тот победил.</div>
+                    </div>
+                    <div class="check-icon"></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Название команды *</label>
+                <input type="text" id="teamName" required placeholder="например, Мозголомы">
+            </div>
+
+            <div class="input-group">
+                <label>Количество участников</label>
+                <select id="members">
+                    <option value="2">2 человека</option>
+                    <option value="3">3 человека</option>
+                    <option value="4" selected>4 человека</option>
+                    <option value="5">5 человека</option>
+                    <option value="6">6 человека</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Контактный телефон</label>
+                <input type="tel" id="phone" placeholder="+7 999 123-45-67">
+            </div>
+
+            <div class="input-group">
+                <label>Ссылка на ВК (или Telegram) капитана *</label>
+                <input type="text" id="contact" required placeholder="https://vk.com/... или @username">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="consent" required>
+                <label for="consent">
+                    Я согласен(на) на <a href="#" target="_blank">обработку персональных данных</a>
+                </label>
+            </div>
+
+            <button type="submit">🚀 ЗАПИСАТЬСЯ НА ВЫБРАННЫЕ ИГРЫ</button>
+            <div id="statusMessage" class="status"></div>
+        </form>
+        <footer>Все данные попадают в Google-таблицу. Мы не спамим ❤️</footer>
+    </div>
+
+    <script>
+        // ---------- Настройка выбора нескольких игр ----------
+        const gameCards = document.querySelectorAll('.game-card');
+        gameCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.game-card')) {
+                    card.classList.toggle('selected');
+                }
+            });
+        });
+
+        // ---------- ССЫЛКА НА GOOGLE ТАБЛИЦУ (замените!!!) ----------
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpbt43m1UlkFxPdF007Ui8tc-W2bWsf-yihBrmM2mCRhIoJQxNzv4PgYDuJ_J3GvhlqA/exec';
+
+        const form = document.getElementById('quizForm');
+        const statusDiv = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Собрать все выбранные игры
+            const selectedGames = [];
+            document.querySelectorAll('.game-card.selected').forEach(card => {
+                const title = card.querySelector('.game-title')?.innerText || 'Без названия';
+                const difficulty = card.querySelector('.game-difficulty')?.innerText || '';
+                const description = card.querySelector('.game-description')?.innerText || '';
+                selectedGames.push({ title, difficulty, description });
+            });
+
+            if (selectedGames.length === 0) {
+                statusDiv.textContent = '❌ Выберите хотя бы одну игру для регистрации';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+
+            const teamName = document.getElementById('teamName').value.trim();
+            const members = document.getElementById('members').value;
+            const phone = document.getElementById('phone').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            const consent = document.getElementById('consent').checked;
+
+            if (!teamName || !contact) {
+                statusDiv.textContent = '❌ Пожалуйста, заполните название команды и контакт капитана';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+
+            if (!consent) {
+                statusDiv.textContent = '❌ Необходимо согласие на обработку персональных данных';
+                statusDiv.className = 'status error';
+                setTimeout(() => statusDiv.className = 'status', 3000);
+                return;
+            }
+
+            const gamesText = selectedGames.map(g => `${g.title} (сложность: ${g.difficulty})`).join('; ');
+
+            statusDiv.textContent = '⏳ Отправка данных...';
+            statusDiv.className = 'status';
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        teamName: teamName,
+                        members: members,
+                        gamesList: gamesText,
+                        phone: phone,
+                        contact: contact,
+                        timestamp: new Date().toLocaleString()
+                    })
+                });
+
+                statusDiv.textContent = '✅ ВЫ ЗАПИСАНЫ! Данные в таблице. Ждём вас!';
+                statusDiv.className = 'status success';
+                form.reset();
+                document.querySelectorAll('.game-card.selected').forEach(c => c.classList.remove('selected'));
+                setTimeout(() => statusDiv.className = 'status', 5000);
+            } catch (error) {
+                statusDiv.textContent = '⚠️ Ошибка. Попробуйте ещё раз или напишите нам в группу.';
+                statusDiv.className = 'status error';
+                console.error(error);
+                setTimeout(() => statusDiv.className = 'status', 5000);
+            }
+        });
+    </script>
+</body>
+</html>

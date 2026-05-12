@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* ГЛАВНАЯ ШАПКА (ПЕРВЫЙ ЭКРАН) */
         .hero {
             min-height: 100vh;
             background-image: url('https://s10.iimage.su/s/12/gEwIklnxc3TJwqhG0UrBwtAvdwGoTwSQbKQG3eKsq.png');
@@ -73,7 +72,6 @@
             box-shadow: 0 18px 32px rgba(0, 0, 0, 0.4);
         }
 
-        /* ОСНОВНОЙ КОНТЕЙНЕР (ФОРМА) */
         .form-wrapper {
             background: rgba(0, 0, 0, 0.2);
             padding: 60px 20px;
@@ -124,7 +122,6 @@
             margin-bottom: 15px;
         }
 
-        /* ЗАГОЛОВКИ БЛОКОВ */
         .section-title {
             font-size: 24px;
             font-weight: 700;
@@ -135,7 +132,6 @@
         }
         .section-title:first-of-type { margin-top: 0; }
 
-        /* ИГРЫ (ГРАДИЕНТНАЯ ОБВОДКА ТОЛЬКО У ВЫБРАННЫХ) */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -216,14 +212,12 @@
     </style>
 </head>
 <body>
-    <!-- ПЕРВЫЙ БЛОК: ХИРО (ШАПКА С КНОПКОЙ В НИЖНЕЙ ТРЕТИ) -->
     <div class="hero">
         <div class="hero-content">
             <button class="start-btn" id="startButton">Начать регистрацию</button>
         </div>
     </div>
 
-    <!-- ВТОРОЙ БЛОК: ФОРМА РЕГИСТРАЦИИ -->
     <div class="form-wrapper" id="registrationForm">
         <div class="form-container" id="formContainer">
             <form id="quizForm">
@@ -274,7 +268,6 @@
     </div>
 
     <script>
-        // Авто-ссылка ВК
         function getVkIdFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('vk_user_id');
@@ -284,20 +277,17 @@
 
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpbt43m1UlkFxPdF007Ui8tc-W2bWsf-yihBrmM2mCRhIoJQxNzv4PgYDuJ_J3GvhlqA/exec';
 
-        // Скролл к форме
         document.getElementById('startButton').addEventListener('click', () => {
             document.getElementById('registrationForm').scrollIntoView({ behavior: 'smooth' });
         });
 
-        // --- ВЫБОР ИГР: переключение класса selected, без автоскролла ---
         const gameCards = document.querySelectorAll('.game-card-wrapper');
         gameCards.forEach(card => {
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', () => {
                 card.classList.toggle('selected');
             });
         });
 
-        // --- КОЛИЧЕСТВО ИГРОКОВ ---
         const playersGrid = document.getElementById('playersGrid');
         let selectedPlayers = null, isLookingForTeam = false, acceptOthers = null, hasBirthday = null, hasFreePass = null, freePassCount = '';
 
@@ -373,7 +363,6 @@
 
         buildPlayersGrid(); updateDynamicQuestions();
 
-        // --- ОТПРАВКА ФОРМЫ (ИСПРАВЛЕННАЯ) ---
         const form = document.getElementById('quizForm');
         const statusDiv = document.getElementById('statusMessage');
         const formContainer = document.getElementById('formContainer');
@@ -391,7 +380,6 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // 1. Проверка выбора игр
             const selectedWrappers = document.querySelectorAll('.game-card-wrapper.selected');
             if (selectedWrappers.length === 0) {
                 statusDiv.textContent = '❌ Выберите хотя бы одну игру';
@@ -400,14 +388,12 @@
                 return;
             }
 
-            // 2. Формируем список выбранных игр
             const selectedGames = Array.from(selectedWrappers).map(wrapper => {
                 const title = wrapper.querySelector('.game-title')?.innerText || '';
                 const date = wrapper.querySelector('.game-date')?.innerText || '';
                 return `${title} (${date})`;
             }).join('; ');
 
-            // 3. Остальные поля
             const teamName = document.getElementById('teamName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -428,45 +414,29 @@
 
             const finalPlayers = isLookingForTeam ? 'Ищу команду' : (selectedPlayers ? selectedPlayers.toString() : '');
 
-            // 4. Данные для отправки
             const formData = {
-                teamName: teamName,
-                players: finalPlayers,
+                teamName, players: finalPlayers,
                 acceptOthers: acceptOthers !== null ? (acceptOthers ? 'Да' : 'Нет') : '',
                 hasBirthday: hasBirthday !== null ? (hasBirthday ? 'Да' : 'Нет') : '',
                 freePass: hasFreePass ? `Да (${freePassCount})` : (hasFreePass === false ? 'Нет' : ''),
-                selectedGames: selectedGames,
-                phone: phone,
-                email: email,
-                autoVkLink: autoVkLink,
+                selectedGames, phone, email, autoVkLink,
                 timestamp: new Date().toLocaleString()
             };
-
-            // Отладка в консоль (можно посмотреть F12)
-            console.log('Отправляемые данные:', formData);
 
             statusDiv.textContent = '⏳ Отправка...';
             statusDiv.className = 'status';
 
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-
-                const result = await response.json();
-                console.log('Ответ сервера:', result);
-
-                if (result.result === 'success') {
-                    if (isLookingForTeam) addChatBlock();
-                    formContainer.classList.add('hidden');
-                    thankYouDiv.classList.add('show');
-                } else {
-                    throw new Error(result.error || 'Неизвестная ошибка');
-                }
+                if (isLookingForTeam) addChatBlock();
+                formContainer.classList.add('hidden');
+                thankYouDiv.classList.add('show');
             } catch (err) {
-                console.error('Ошибка при отправке:', err);
                 statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
                 statusDiv.className = 'status error';
                 setTimeout(() => statusDiv.className = 'status', 3000);

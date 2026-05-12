@@ -1,12 +1,549 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Тест приложения</title>
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors *">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Регистрация на квиз | Эйнштейн Party</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #E63349, #E95233, #F2922E, #F9B224);
+            min-height: 100vh;
+        }
+
+        .hero {
+            min-height: 100vh;
+            background-image: url('https://s10.iimage.su/s/12/gEwIklnxc3TJwqhG0UrBwtAvdwGoTwSQbKQG3eKsq.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+            padding-bottom: 15vh;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+
+        .start-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #E63349, #E95233, #F2922E, #F9B224);
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            padding: 20px 56px;
+            border-radius: 60px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 1px;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 18px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-wrapper {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 60px 20px;
+        }
+
+        .form-switcher {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 40px;
+            padding: 40px 35px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            transition: 0.3s;
+        }
+
+        .thank-you {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 40px;
+            padding: 40px 35px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .form-container.hidden {
+            display: none;
+        }
+
+        .thank-you.show {
+            display: block;
+        }
+
+        .thank-you h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #22212F;
+        }
+
+        .thank-you p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .thank-you button {
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chat-block {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 24px;
+        }
+
+        .chat-poster {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 45px 0 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #AF2C83;
+            color: #22212F;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 15px;
+        }
+
+        .game-card-wrapper {
+            background: #e0e0e0;
+            border-radius: 28px;
+            padding: 2px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .game-card-wrapper.selected {
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 26px;
+            padding: 20px;
+            transition: 0.2s;
+            height: 100%;
+        }
+
+        .game-card-wrapper.selected .game-card {
+            background: #f0f5ff;
+        }
+
+        .game-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #1a1a2e;
+        }
+
+        .game-date {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .game-image {
+            width: 100%;
+            border-radius: 16px;
+            display: block;
+        }
+
+        .players-grid,
+        .yesno-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0 10px 0;
+        }
+
+        .player-btn,
+        .yesno-btn {
+            background: #f0f2f5;
+            border: 1px solid #ccc;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .player-btn.selected,
+        .yesno-btn.selected {
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+            color: white;
+            border: none;
+        }
+
+        .question-title {
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            font-size: 18px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            color: green;
+            display: block;
+        }
+
+        .status.error {
+            color: red;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет, ВК!</h1>
-    <p>Если вы видите этот текст, приложение работает.</p>
-    <a href="https://xochyprikalyvatsya.github.io/quiz-registration/">Перейти к полной форме</a>
+
+<div class="hero">
+    <div class="hero-content">
+        <button class="start-btn" id="startButton">Начать регистрацию</button>
+    </div>
+</div>
+
+<div class="form-wrapper" id="registrationForm">
+    <div class="form-switcher" id="formSwitcher">
+        <!-- Форма регистрации -->
+        <div class="form-container" id="formContainer">
+            <form id="quizForm">
+                <div class="section-title">📅 На какой квиз идём?</div>
+                <div class="games-grid" id="gamesGrid">
+                    <div class="game-card-wrapper" data-game-id="game1"><div class="game-card"><div class="game-title">🔢 Без букв</div><div class="game-date">📅 14 мая (ЧТ), 19:30 · Раковарня</div><img class="game-image" src="https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png" alt="Постер"></div></div>
+                    <div class="game-card-wrapper" data-game-id="game2"><div class="game-card"><div class="game-title">🧡 Классика. Обо всём</div><div class="game-date">📅 17 мая (ВС), 15:00 · Раковарня</div><img class="game-image" src="https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png" alt="Постер"></div></div>
+                    <div class="game-card-wrapper" data-game-id="game3"><div class="game-card"><div class="game-title">🌇 Битва городов</div><div class="game-date">📅 21 мая (ЧТ), 19:30 · Раковарня</div><img class="game-image" src="https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png" alt="Постер"></div></div>
+                    <div class="game-card-wrapper" data-game-id="game4"><div class="game-card"><div class="game-title">⚽ Футбол: серия игр (2/4)</div><div class="game-date">📅 28 мая (ЧТ), 19:30 · Раковарня</div><img class="game-image" src="https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png" alt="Постер"></div></div>
+                    <div class="game-card-wrapper" data-game-id="game5"><div class="game-card"><div class="game-title">🎶 Музыкальное лото</div><div class="game-date">📅 31 мая (ВС), 16:00 · Типография</div><img class="game-image" src="https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png" alt="Постер"></div></div>
+                </div>
+
+                <div class="section-title" id="teamBlockTitle">👥 Команда</div>
+                <div class="input-group">
+                    <label>Название команды *</label>
+                    <input type="text" id="teamName" required placeholder="Например, Мозголомы">
+                </div>
+                <div class="question-title">Сколько вас?</div>
+                <div class="players-grid" id="playersGrid"></div>
+                <input type="hidden" id="lookingForTeam" value="no">
+                
+                <div id="dynamicQuestions"></div>
+
+                <div class="section-title" id="contactsBlockTitle">📋 Контакты</div>
+                <div class="input-group">
+                    <label>Контактный телефон</label>
+                    <input type="tel" id="phone" placeholder="+7 999 123-45-67">
+                </div>
+                <div class="input-group">
+                    <label>Электронная почта *</label>
+                    <input type="email" id="email" required placeholder="example@mail.ru">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent" required>
+                    <label>Я согласен(на) на обработку персональных данных *</label>
+                </div>
+
+                <button type="submit">ЗАРЕГИСТРИРОВАТЬСЯ 🚀</button>
+                <div id="statusMessage" class="status"></div>
+                <footer>Нажимая кнопку, вы принимаете условия обработки данных.</footer>
+            </form>
+        </div>
+
+        <!-- Блок "Спасибо" -->
+        <div class="thank-you" id="thankYou">
+            <h2>🎉 Спасибо за регистрацию!</h2>
+            <p>Мы свяжемся с вами в день игры.</p>
+            <button onclick="window.location.href='https://vk.com/einsteinparty_nsk'">Вернуться в сообщество</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getVkIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('vk_user_id');
+    }
+    const vkUserId = getVkIdFromUrl();
+    const autoVkLink = vkUserId ? `https://vk.com/id${vkUserId}` : 'Не определён';
+
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpbt43m1UlkFxPdF007Ui8tc-W2bWsf-yihBrmM2mCRhIoJQxNzv4PgYDuJ_J3GvhlqA/exec';
+
+    document.getElementById('startButton').addEventListener('click', () => {
+        document.getElementById('registrationForm').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    const gameCards = document.querySelectorAll('.game-card-wrapper');
+    gameCards.forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('selected');
+        });
+    });
+
+    const playersGrid = document.getElementById('playersGrid');
+    let selectedPlayers = null, isLookingForTeam = false, acceptOthers = null, hasBirthday = null, hasFreePass = null, freePassCount = '';
+
+    function buildPlayersGrid() {
+        playersGrid.innerHTML = '';
+        for (let i = 2; i <= 10; i++) {
+            const btn = document.createElement('div');
+            btn.className = 'player-btn';
+            btn.innerText = i;
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedPlayers = i;
+                isLookingForTeam = false;
+                document.getElementById('lookingForTeam').value = 'no';
+                updateDynamicQuestions();
+            });
+            playersGrid.appendChild(btn);
+        }
+        const lookingBtn = document.createElement('div');
+        lookingBtn.className = 'player-btn';
+        lookingBtn.innerText = '🤝 Ищу команду';
+        lookingBtn.addEventListener('click', () => {
+            document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
+            lookingBtn.classList.add('selected');
+            selectedPlayers = null;
+            isLookingForTeam = true;
+            document.getElementById('lookingForTeam').value = 'yes';
+            updateDynamicQuestions();
+        });
+        playersGrid.appendChild(lookingBtn);
+    }
+
+    function updateDynamicQuestions() {
+        const dynamicDiv = document.getElementById('dynamicQuestions');
+        dynamicDiv.innerHTML = '';
+        acceptOthers = null; hasBirthday = null; hasFreePass = null; freePassCount = '';
+
+        if (!isLookingForTeam && selectedPlayers) {
+            const block = document.createElement('div');
+            block.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
+            const btnDiv = document.createElement('div'); btnDiv.className = 'yesno-grid';
+            const yesBtn = document.createElement('div'); yesBtn.className = 'yesno-btn'; yesBtn.innerText = 'Да';
+            const noBtn = document.createElement('div'); noBtn.className = 'yesno-btn'; noBtn.innerText = 'Нет';
+            const setAccept = (val) => { acceptOthers = val; if (val) { yesBtn.classList.add('selected'); noBtn.classList.remove('selected'); } else { noBtn.classList.add('selected'); yesBtn.classList.remove('selected'); } };
+            yesBtn.onclick = () => setAccept(true);
+            noBtn.onclick = () => setAccept(false);
+            btnDiv.appendChild(yesBtn); btnDiv.appendChild(noBtn); block.appendChild(btnDiv); dynamicDiv.appendChild(block);
+        }
+
+        const birthdayBlock = document.createElement('div');
+        birthdayBlock.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
+        const bdayDiv = document.createElement('div'); bdayDiv.className = 'yesno-grid';
+        const yesBday = document.createElement('div'); yesBday.className = 'yesno-btn'; yesBday.innerText = 'Да';
+        const noBday = document.createElement('div'); noBday.className = 'yesno-btn'; noBday.innerText = 'Нет';
+        const setBday = (val) => { hasBirthday = val; if (val) { yesBday.classList.add('selected'); noBday.classList.remove('selected'); } else { noBday.classList.add('selected'); yesBday.classList.remove('selected'); } };
+        yesBday.onclick = () => setBday(true);
+        noBday.onclick = () => setBday(false);
+        bdayDiv.appendChild(yesBday); bdayDiv.appendChild(noBday); birthdayBlock.appendChild(bdayDiv); dynamicDiv.appendChild(birthdayBlock);
+
+        const fpBlock = document.createElement('div');
+        fpBlock.innerHTML = `<div class="question-title">🎫 Есть ли у вас бесплатные проходки?</div>`;
+        const fpDiv = document.createElement('div'); fpDiv.className = 'yesno-grid';
+        const yesFp = document.createElement('div'); yesFp.className = 'yesno-btn'; yesFp.innerText = 'Да';
+        const noFp = document.createElement('div'); noFp.className = 'yesno-btn'; noFp.innerText = 'Нет';
+        const fpInput = document.createElement('input'); fpInput.type = 'text'; fpInput.placeholder = 'Сколько? (свободная форма)'; fpInput.style.marginTop = '12px'; fpInput.style.width = '100%'; fpInput.style.display = 'none';
+        fpInput.addEventListener('input', (e) => { freePassCount = e.target.value; });
+        const setFp = (val) => { hasFreePass = val; if (val) { yesFp.classList.add('selected'); noFp.classList.remove('selected'); fpInput.style.display = 'block'; } else { noFp.classList.add('selected'); yesFp.classList.remove('selected'); fpInput.style.display = 'none'; freePassCount = ''; } };
+        yesFp.onclick = () => setFp(true);
+        noFp.onclick = () => setFp(false);
+        fpDiv.appendChild(yesFp); fpDiv.appendChild(noFp); fpBlock.appendChild(fpDiv); fpBlock.appendChild(fpInput); dynamicDiv.appendChild(fpBlock);
+    }
+
+    buildPlayersGrid(); updateDynamicQuestions();
+
+    const form = document.getElementById('quizForm');
+    const statusDiv = document.getElementById('statusMessage');
+    const formContainer = document.getElementById('formContainer');
+    const thankYouDiv = document.getElementById('thankYou');
+
+    function addChatBlock() {
+        const existing = thankYouDiv.querySelector('.chat-block');
+        if (existing) existing.remove();
+        const chatBlock = document.createElement('div'); chatBlock.className = 'chat-block';
+        chatBlock.innerHTML = `<img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат"><p>Не с кем сходить на квиз? Тогда переходите в наш чат, где вы точно найдете команду!</p><button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>`;
+        thankYouDiv.appendChild(chatBlock);
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const selectedWrappers = document.querySelectorAll('.game-card-wrapper.selected');
+        if (selectedWrappers.length === 0) {
+            statusDiv.textContent = '❌ Выберите хотя бы одну игру';
+            statusDiv.className = 'status error';
+            setTimeout(() => statusDiv.className = 'status', 3000);
+            return;
+        }
+
+        const selectedGames = Array.from(selectedWrappers).map(wrapper => {
+            const title = wrapper.querySelector('.game-title')?.innerText || '';
+            const date = wrapper.querySelector('.game-date')?.innerText || '';
+            return `${title} (${date})`;
+        }).join('; ');
+
+        const teamName = document.getElementById('teamName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const consent = document.getElementById('consent').checked;
+
+        if (!teamName || !email) {
+            statusDiv.textContent = '❌ Заполните название команды и электронную почту';
+            statusDiv.className = 'status error';
+            setTimeout(() => statusDiv.className = 'status', 3000);
+            return;
+        }
+        if (!consent) {
+            statusDiv.textContent = '❌ Необходимо согласие на обработку данных';
+            statusDiv.className = 'status error';
+            setTimeout(() => statusDiv.className = 'status', 3000);
+            return;
+        }
+
+        const finalPlayers = isLookingForTeam ? 'Ищу команду' : (selectedPlayers ? selectedPlayers.toString() : '');
+
+        const payload = {
+            teamName: teamName,
+            members: finalPlayers,
+            acceptOthers: acceptOthers ? 'Да' : 'Нет',
+            hasBirthday: hasBirthday ? 'Да' : 'Нет',
+            freePass: hasFreePass ? `Да (${freePassCount})` : 'Нет',
+            gamesList: selectedGames,
+            phone: phone,
+            contact: email,
+            autoVkLink: autoVkLink,
+            timestamp: new Date().toLocaleString()
+        };
+
+        statusDiv.textContent = '⏳ Отправка...';
+        statusDiv.className = 'status';
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (isLookingForTeam) addChatBlock();
+            formContainer.classList.add('hidden');
+            thankYouDiv.classList.add('show');
+        } catch (err) {
+            statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
+            statusDiv.className = 'status error';
+            setTimeout(() => statusDiv.className = 'status', 3000);
+        }
+    });
+</script>
 </body>
 </html>

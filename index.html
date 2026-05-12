@@ -21,10 +21,15 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #AF2C83, #E50B7C, #E63349, #E95233, #F2922E, #F9B224);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         .hero {
-            min-height: 100vh;
+            min-height: auto;
             background-image: url('https://s10.iimage.su/s/12/gEwIklnxc3TJwqhG0UrBwtAvdwGoTwSQbKQG3eKsq.png');
             background-size: cover;
             background-position: center;
@@ -33,7 +38,7 @@
             align-items: flex-end;
             justify-content: center;
             position: relative;
-            padding-bottom: 15vh;
+            padding-bottom: 10vh;
         }
 
         .hero::before {
@@ -77,6 +82,7 @@
         .form-wrapper {
             background: rgba(0, 0, 0, 0.2);
             padding: 60px 20px;
+            flex: 1;
         }
 
         .form-switcher {

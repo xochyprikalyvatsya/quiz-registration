@@ -29,9 +29,10 @@
             background-position: center;
             background-repeat: no-repeat;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
             position: relative;
+            padding-bottom: 15vh;
         }
 
         .hero::before {
@@ -50,7 +51,6 @@
             z-index: 2;
             text-align: center;
             width: 100%;
-            margin-top: 80px;
         }
 
         .start-btn {
@@ -137,7 +137,7 @@
         }
         .section-title:first-of-type { margin-top: 0; }
 
-        /* ИГРЫ (ГРАДИЕНТНАЯ ОБВОДКА) */
+        /* ИГРЫ (ГРАДИЕНТНАЯ ОБВОДКА ТОЛЬКО У ВЫБРАННЫХ) */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -146,11 +146,15 @@
         }
 
         .game-card-wrapper {
-            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+            background: #e0e0e0;
             border-radius: 28px;
             padding: 2px;
             transition: 0.2s;
             cursor: pointer;
+        }
+
+        .game-card-wrapper.selected {
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
         }
 
         .game-card {
@@ -163,7 +167,6 @@
 
         .game-card-wrapper.selected .game-card {
             background: #f0f5ff;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
         }
 
         .game-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #1a1a2e; }
@@ -215,7 +218,7 @@
     </style>
 </head>
 <body>
-    <!-- ПЕРВЫЙ БЛОК: ХИРО (ШАПКА С КНОПКОЙ) -->
+    <!-- ПЕРВЫЙ БЛОК: ХИРО (ШАПКА С КНОПКОЙ В НИЖНЕЙ ТРЕТИ) -->
     <div class="hero">
         <div class="hero-content">
             <button class="start-btn" id="startButton">Начать регистрацию</button>
@@ -288,19 +291,15 @@
             document.getElementById('registrationForm').scrollIntoView({ behavior: 'smooth' });
         });
 
-        // --- ВЫБОР ИГР (обновлено для game-card-wrapper) ---
+        // --- ВЫБОР ИГР: переключение класса selected, без автоскролла ---
         const gameCards = document.querySelectorAll('.game-card-wrapper');
         gameCards.forEach(card => {
             card.addEventListener('click', (e) => {
                 card.classList.toggle('selected');
-                // Автоскролл к блоку "Команда" после выбора хотя бы одной игры
-                if (card.classList.contains('selected')) {
-                    document.getElementById('teamBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
             });
         });
 
-        // --- КОЛИЧЕСТВО ИГРОКОВ ---
+        // --- КОЛИЧЕСТВО ИГРОКОВ (без автоскроллов, кроме кнопки "Начать регистрацию") ---
         const playersGrid = document.getElementById('playersGrid');
         let selectedPlayers = null, isLookingForTeam = false, acceptOthers = null, hasBirthday = null, hasFreePass = null, freePassCount = '';
 
@@ -317,12 +316,6 @@
                     isLookingForTeam = false;
                     document.getElementById('lookingForTeam').value = 'no';
                     updateDynamicQuestions();
-                    // Скролл к первому доп. вопросу
-                    setTimeout(() => {
-                        const firstQuestion = document.querySelector('#dynamicQuestions .question-title');
-                        if (firstQuestion) firstQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 150);
                 });
                 playersGrid.appendChild(btn);
             }
@@ -336,11 +329,6 @@
                 isLookingForTeam = true;
                 document.getElementById('lookingForTeam').value = 'yes';
                 updateDynamicQuestions();
-                setTimeout(() => {
-                    const firstQuestion = document.querySelector('#dynamicQuestions .question-title');
-                    if (firstQuestion) firstQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 150);
             });
             playersGrid.appendChild(lookingBtn);
         }
@@ -350,7 +338,6 @@
             dynamicDiv.innerHTML = '';
             acceptOthers = null; hasBirthday = null; hasFreePass = null; freePassCount = '';
 
-            // Вопрос "Готовы принять людей?" (только если не "Ищу команду")
             if (!isLookingForTeam && selectedPlayers) {
                 const block = document.createElement('div');
                 block.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
@@ -358,23 +345,21 @@
                 const yesBtn = document.createElement('div'); yesBtn.className = 'yesno-btn'; yesBtn.innerText = 'Да';
                 const noBtn = document.createElement('div'); noBtn.className = 'yesno-btn'; noBtn.innerText = 'Нет';
                 const setAccept = (val) => { acceptOthers = val; if (val) { yesBtn.classList.add('selected'); noBtn.classList.remove('selected'); } else { noBtn.classList.add('selected'); yesBtn.classList.remove('selected'); } };
-                yesBtn.onclick = () => { setAccept(true); setTimeout(() => { const next = document.querySelector('#dynamicQuestions .yesno-grid:not(:first-child)'); if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' }); else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); };
-                noBtn.onclick = () => { setAccept(false); setTimeout(() => { const next = document.querySelector('#dynamicQuestions .yesno-grid:not(:first-child)'); if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' }); else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); };
+                yesBtn.onclick = () => setAccept(true);
+                noBtn.onclick = () => setAccept(false);
                 btnDiv.appendChild(yesBtn); btnDiv.appendChild(noBtn); block.appendChild(btnDiv); dynamicDiv.appendChild(block);
             }
 
-            // Вопрос "Есть именинник?" (всегда)
             const birthdayBlock = document.createElement('div');
             birthdayBlock.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
             const bdayDiv = document.createElement('div'); bdayDiv.className = 'yesno-grid';
             const yesBday = document.createElement('div'); yesBday.className = 'yesno-btn'; yesBday.innerText = 'Да';
             const noBday = document.createElement('div'); noBday.className = 'yesno-btn'; noBday.innerText = 'Нет';
             const setBday = (val) => { hasBirthday = val; if (val) { yesBday.classList.add('selected'); noBday.classList.remove('selected'); } else { noBday.classList.add('selected'); yesBday.classList.remove('selected'); } };
-            yesBday.onclick = () => { setBday(true); setTimeout(() => { const next = document.querySelector('#dynamicQuestions .yesno-grid:not(:first-child), #dynamicQuestions .yesno-grid'); if (next && next !== bdayDiv) next.scrollIntoView({ behavior: 'smooth', block: 'center' }); else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); };
-            noBday.onclick = () => { setBday(false); setTimeout(() => { const next = document.querySelector('#dynamicQuestions .yesno-grid:not(:first-child), #dynamicQuestions .yesno-grid'); if (next && next !== bdayDiv) next.scrollIntoView({ behavior: 'smooth', block: 'center' }); else document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); };
+            yesBday.onclick = () => setBday(true);
+            noBday.onclick = () => setBday(false);
             bdayDiv.appendChild(yesBday); bdayDiv.appendChild(noBday); birthdayBlock.appendChild(bdayDiv); dynamicDiv.appendChild(birthdayBlock);
 
-            // Вопрос "Бесплатные проходки"
             const fpBlock = document.createElement('div');
             fpBlock.innerHTML = `<div class="question-title">🎫 Есть ли у вас бесплатные проходки?</div>`;
             const fpDiv = document.createElement('div'); fpDiv.className = 'yesno-grid';
@@ -383,20 +368,12 @@
             const fpInput = document.createElement('input'); fpInput.type = 'text'; fpInput.placeholder = 'Сколько? (свободная форма)'; fpInput.style.marginTop = '12px'; fpInput.style.width = '100%'; fpInput.style.display = 'none';
             fpInput.addEventListener('input', (e) => { freePassCount = e.target.value; });
             const setFp = (val) => { hasFreePass = val; if (val) { yesFp.classList.add('selected'); noFp.classList.remove('selected'); fpInput.style.display = 'block'; } else { noFp.classList.add('selected'); yesFp.classList.remove('selected'); fpInput.style.display = 'none'; freePassCount = ''; } };
-            yesFp.onclick = () => { setFp(true); setTimeout(() => document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); };
-            noFp.onclick = () => { setFp(false); setTimeout(() => document.getElementById('contactsBlockTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); };
+            yesFp.onclick = () => setFp(true);
+            noFp.onclick = () => setFp(false);
             fpDiv.appendChild(yesFp); fpDiv.appendChild(noFp); fpBlock.appendChild(fpDiv); fpBlock.appendChild(fpInput); dynamicDiv.appendChild(fpBlock);
         }
 
         buildPlayersGrid(); updateDynamicQuestions();
-
-        // Автоскролл при вводе названия команды
-        const teamNameInput = document.getElementById('teamName');
-        teamNameInput.addEventListener('blur', () => {
-            if (teamNameInput.value.trim().length > 2) {
-                document.querySelector('.question-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        });
 
         // Отправка формы
         const form = document.getElementById('quizForm');

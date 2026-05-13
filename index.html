@@ -456,11 +456,10 @@
             vkBridge.send('VKWebAppGetUserInfo')
                 .then(data => {
                     if (data && data.id) {
-                        console.log('VK ID через API:', data.id);
                         window.vkUserIdGlobal = data.id;
                     }
                 })
-                .catch(err => console.log('Не удалось получить VK ID через API:', err));
+                .catch(err => console.log('VK ID через API не получен'));
         }
         
         return userId || null;
@@ -468,9 +467,8 @@
     
     const vkUserId = getVkUserId();
     window.vkUserIdGlobal = vkUserId;
-    console.log('VK User ID:', vkUserId || 'Не определён');
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAGorOJeK1pyXGpd2YO2LDAa4GsNVaOkZww9oZQlQNOaxfTTxZzTJn4oR1MbBsq1bW8w/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwS2rwzKHOeDbTg75vPJagreoCwQMEFVecBdFVtr-MfzaxDU4hGlpDLbPzEm35pE89hIQ/exec';
 
     const games = [
         {

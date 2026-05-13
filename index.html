@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Регистрация на квиз | Эйнштейн Party</title>
     
-    <!-- VK Bridge -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     
     <style>
@@ -439,18 +438,16 @@
 </div>
 
 <script>
-    // ============ ИНИЦИАЛИЗАЦИЯ VK ============
     if (window.vkBridge) {
         vkBridge.send('VKWebAppInit')
             .then(() => {
-                console.log('✅ VK Mini App инициализирован');
+                console.log('VK Mini App инициализирован');
                 return vkBridge.send('VKWebAppResizeWindow', { width: 'full', height: 'full' });
             })
-            .then(() => console.log('✅ Размер окна настроен'))
-            .catch(err => console.error('❌ Ошибка VK:', err));
+            .then(() => console.log('Размер окна настроен'))
+            .catch(err => console.error('Ошибка VK:', err));
     }
 
-    // ============ ПОЛУЧЕНИЕ ID ВК ============
     function getVkUserId() {
         const urlParams = new URLSearchParams(window.location.search);
         let userId = urlParams.get('vk_user_id');
@@ -459,11 +456,11 @@
             vkBridge.send('VKWebAppGetUserInfo')
                 .then(data => {
                     if (data && data.id) {
-                        console.log('✅ VK ID через API:', data.id);
+                        console.log('VK ID через API:', data.id);
                         window.vkUserIdGlobal = data.id;
                     }
                 })
-                .catch(err => console.log('⚠️ Не удалось получить VK ID через API:', err));
+                .catch(err => console.log('Не удалось получить VK ID через API:', err));
         }
         
         return userId || null;
@@ -471,12 +468,10 @@
     
     const vkUserId = getVkUserId();
     window.vkUserIdGlobal = vkUserId;
-    console.log('📱 VK User ID:', vkUserId || 'Не определён');
+    console.log('VK User ID:', vkUserId || 'Не определён');
 
-    // ============ URL ДЛЯ ОТПРАВКИ ============
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPnoixEeMM8-Hhxzmfwfke8CUhrpX0tO_OzfMLyG_UvVpbzfdqWiv6-CPmAS3NHfDdmA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAGorOJeK1pyXGpd2YO2LDAa4GsNVaOkZww9oZQlQNOaxfTTxZzTJn4oR1MbBsq1bW8w/exec';
 
-    // ============ ДАННЫЕ ИГР ============
     const games = [
         {
             id: 'game1',
@@ -510,7 +505,6 @@
         }
     ];
 
-    // ============ ПОСТРОЕНИЕ КАРТОЧЕК ИГР ============
     function buildGamesGrid() {
         const gamesGrid = document.getElementById('gamesGrid');
         gamesGrid.innerHTML = '';
@@ -539,7 +533,6 @@
 
     buildGamesGrid();
 
-    // ============ ПЕРЕМЕННЫЕ ФОРМЫ ============
     const playersGrid = document.getElementById('playersGrid');
     let selectedPlayers = null;
     let isLookingForTeam = false;
@@ -548,7 +541,6 @@
     let hasFreePass = null;
     let freePassCount = '';
 
-    // ============ ПОСТРОЕНИЕ ВЫБОРА ИГРОКОВ ============
     function buildPlayersGrid() {
         playersGrid.innerHTML = '';
         
@@ -581,7 +573,6 @@
         playersGrid.appendChild(lookingBtn);
     }
 
-    // ============ ДИНАМИЧЕСКИЕ ВОПРОСЫ ============
     function updateDynamicQuestions() {
         const dynamicDiv = document.getElementById('dynamicQuestions');
         dynamicDiv.innerHTML = '';
@@ -611,14 +602,12 @@
                 acceptOthers = true;
                 yesBtn.classList.add('selected');
                 noBtn.classList.remove('selected');
-                console.log('✅ acceptOthers = true');
             };
             
             noBtn.onclick = () => {
                 acceptOthers = false;
                 noBtn.classList.add('selected');
                 yesBtn.classList.remove('selected');
-                console.log('✅ acceptOthers = false');
             };
             
             btnDiv.appendChild(yesBtn);
@@ -644,14 +633,12 @@
             hasBirthday = true;
             yesBday.classList.add('selected');
             noBday.classList.remove('selected');
-            console.log('✅ hasBirthday = true');
         };
         
         noBday.onclick = () => {
             hasBirthday = false;
             noBday.classList.add('selected');
             yesBday.classList.remove('selected');
-            console.log('✅ hasBirthday = false');
         };
         
         bdayDiv.appendChild(yesBday);
@@ -681,7 +668,6 @@
         
         fpInput.addEventListener('input', (e) => {
             freePassCount = e.target.value;
-            console.log('✅ freePassCount =', freePassCount);
         });
         
         yesFp.onclick = () => {
@@ -689,7 +675,6 @@
             yesFp.classList.add('selected');
             noFp.classList.remove('selected');
             fpInput.style.display = 'block';
-            console.log('✅ hasFreePass = true');
         };
         
         noFp.onclick = () => {
@@ -698,7 +683,6 @@
             yesFp.classList.remove('selected');
             fpInput.style.display = 'none';
             freePassCount = '';
-            console.log('✅ hasFreePass = false');
         };
         
         fpDiv.appendChild(yesFp);
@@ -711,7 +695,6 @@
     buildPlayersGrid();
     updateDynamicQuestions();
 
-    // ============ ОТПРАВКА ФОРМЫ ============
     const form = document.getElementById('quizForm');
     const statusDiv = document.getElementById('statusMessage');
     const formContainer = document.getElementById('formContainer');
@@ -732,7 +715,6 @@
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('🚀 Начало отправки формы...');
 
         const selectedWrappers = document.querySelectorAll('.game-card-wrapper.selected');
         if (selectedWrappers.length === 0) {
@@ -787,9 +769,6 @@
             email: email
         };
 
-        console.log('📦 ОТПРАВЛЯЕМЫЕ ДАННЫЕ:');
-        console.table(payload);
-
         statusDiv.textContent = '⏳ Отправка...';
         statusDiv.className = 'status';
 
@@ -801,13 +780,10 @@
                 body: JSON.stringify(payload)
             });
             
-            console.log('✅ Данные отправлены');
-            
             if (isLookingForTeam) addChatBlock();
             formContainer.classList.add('hidden');
             thankYouDiv.classList.add('show');
         } catch (err) {
-            console.error('❌ Ошибка:', err);
             statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
             statusDiv.className = 'status error';
             setTimeout(() => statusDiv.className = 'status', 3000);

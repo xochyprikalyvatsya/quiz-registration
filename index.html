@@ -94,7 +94,7 @@
     if (window.vkBridge) { vkBridge.send('VKWebAppInit').then(() => vkBridge.send('VKWebAppResizeWindow', { width: 'full', height: 'full' })).catch(() => {}); }
     function getVkUserId() { const p = new URLSearchParams(window.location.search); let id = p.get('vk_user_id'); if (!id && window.vkBridge) { vkBridge.send('VKWebAppGetUserInfo').then(d => { if (d && d.id) window.vkUserIdGlobal = d.id; }).catch(() => {}); } return id || null; }
     const vkUserId = getVkUserId(); window.vkUserIdGlobal = vkUserId;
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8CLmFd-NiQRE_6wIWcyxRABN7CzJZgg_BwGhaUlZrWOsTxUb_bcu_DlzBOz4yBjoQMQ/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRx2Pw2HKvSllLAkvHuVIwT0nfU1-g2zQA3TWt1rUGksEnuEq-YubZBKHQ7AMovk84ww/exec';
     const games = [
         { id: 'game1', title: '🔢 Без букв', date: '📅 14 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png' },
         { id: 'game2', title: '🧡 Классика. Обо всём', date: '📅 17 мая (ВС), 15:00 · Раковарня', image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png' },
@@ -113,13 +113,13 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const sw = document.querySelectorAll('.game-card-wrapper.selected');
-        if (sw.length === 0) { statusDiv.textContent = '❌ Выберите хотя бы одну игру'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
+        if (sw.length === 0) { statusDiv.textContent = '❌ Выберите игру'; statusDiv.className = 'status error'; return; }
         const sg = Array.from(sw).map(w => { const t = w.querySelector('.game-title')?.innerText || ''; const d = w.querySelector('.game-date')?.innerText || ''; return `${t} (${d})`; }).join('; ');
         const tn = document.getElementById('teamName').value.trim();
         const em = document.getElementById('email').value.trim();
         const ph = document.getElementById('phone').value.trim();
-        if (!tn || !em) { statusDiv.textContent = '❌ Заполните название команды и почту'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
-        if (!document.getElementById('consent').checked) { statusDiv.textContent = '❌ Нужно согласие'; statusDiv.className = 'status error'; setTimeout(() => statusDiv.className = 'status', 3000); return; }
+        if (!tn || !em) { statusDiv.textContent = '❌ Заполните команду и почту'; statusDiv.className = 'status error'; return; }
+        if (!document.getElementById('consent').checked) { statusDiv.textContent = '❌ Нужно согласие'; statusDiv.className = 'status error'; return; }
         const fp = isLookingForTeam ? 'Ищу команду' : (selectedPlayers ? selectedPlayers.toString() : '');
         const fId = window.vkUserIdGlobal || vkUserId || '';
         const fLink = fId ? `https://vk.com/id${fId}` : 'Не определён';

@@ -10,395 +10,95 @@
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; width: 100%; max-width: 100vw; overflow-x: hidden; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #AF2C83, #E50B7C, #E63349, #E95233, #F2922E, #F9B224);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden;
-            position: relative;
+            min-height: 100vh; margin: 0; padding: 0; display: flex; flex-direction: column;
+            width: 100%; max-width: 100vw; overflow-x: hidden; position: relative;
         }
-
         .hero {
-            width: 100%;
-            background-image: url('https://s10.iimage.su/s/12/gEwIklnxc3TJwqhG0UrBwtAvdwGoTwSQbKQG3eKsq.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            width: 100%; min-height: 500px; display: flex; flex-direction: column; justify-content: flex-end;
+            background: url('https://s10.iimage.su/s/12/gEwIklnxc3TJwqhG0UrBwtAvdwGoTwSQbKQG3eKsq.png') center/cover no-repeat;
             position: relative;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
         }
-
         .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
             background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 80%, rgba(175,44,131,0.9) 100%);
-            z-index: 1;
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            width: 100%;
+        .hero-content { position: relative; z-index: 2; width: 100%; }
+        .hero-spacer { height: 80px; }
+        .form-wrapper { background: rgba(0,0,0,0.2); padding: 0; flex: 1; width: 100%; max-width: 100vw; margin-top: -80px; position: relative; z-index: 3; }
+        .form-switcher { max-width: 1000px; margin: 0 auto; padding: 0 20px; width: 100%; }
+        .form-container, .thank-you {
+            background: rgba(255,255,255,0.96); border-radius: 40px; padding: 40px 35px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3); width: 100%;
         }
-
-        .hero-spacer {
-            height: 80px;
-        }
-
-        .form-wrapper {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0;
-            flex: 1;
-            width: 100%;
-            max-width: 100vw;
-            margin-top: -80px;
-            position: relative;
-            z-index: 3;
-        }
-
-        .form-switcher {
-            max-width: 1000px;
-            margin: 0 auto;
-            position: relative;
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        .form-container {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 40px;
-            padding: 40px 35px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-            transition: 0.3s;
-            width: 100%;
-        }
-
-        .thank-you {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 40px;
-            padding: 40px 35px;
-            text-align: center;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-            display: none;
-            width: 100%;
-        }
-
-        .form-container.hidden {
-            display: none;
-        }
-
-        .thank-you.show {
-            display: block;
-        }
-
-        .thank-you h2 {
-            font-size: 28px;
-            margin-bottom: 15px;
-            color: #22212F;
-        }
-
-        .thank-you p {
-            font-size: 18px;
-            margin-bottom: 25px;
-        }
-
+        .thank-you { display: none; text-align: center; }
+        .form-container.hidden { display: none; }
+        .thank-you.show { display: block; }
+        .thank-you h2 { font-size: 28px; margin-bottom: 15px; color: #22212F; }
+        .thank-you p { font-size: 18px; margin-bottom: 25px; }
         .thank-you button {
-            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
+            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224); color: white;
+            border: none; padding: 12px 28px; border-radius: 40px; font-size: 16px; cursor: pointer; font-weight: bold;
         }
-
-        .chat-block {
-            margin-top: 30px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 24px;
-        }
-
-        .chat-poster {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin: 45px 0 20px 0;
-            padding-bottom: 8px;
-            border-bottom: 3px solid #AF2C83;
-            color: #22212F;
-        }
-
-        .section-title:first-of-type {
-            margin-top: 0;
-        }
-
-        .games-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 15px;
-        }
-
-        .game-card-wrapper {
-            background: #e0e0e0;
-            border-radius: 20px;
-            padding: 2px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .game-card-wrapper.selected {
-            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
-        }
-
-        .game-card {
-            background: white;
-            border-radius: 18px;
-            padding: 16px;
-            transition: 0.2s;
-        }
-
-        .game-card-wrapper.selected .game-card {
-            background: #f0f5ff;
-        }
-
-        .game-info {
-            margin-bottom: 12px;
-        }
-
-        .game-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            color: #1a1a2e;
-        }
-
-        .game-date {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .game-image {
-            width: 100%;
-            border-radius: 12px;
-            display: block;
-            object-fit: contain;
-        }
-
-        .players-grid,
-        .yesno-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 15px 0 10px 0;
-        }
-
-        .player-btn,
-        .yesno-btn {
-            background: #f0f2f5;
-            border: 1px solid #ccc;
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .player-btn.selected,
-        .yesno-btn.selected {
-            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
-            color: white;
-            border: none;
-        }
-
-        .question-title {
-            font-weight: 700;
-            margin: 20px 0 8px 0;
-            font-size: 18px;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        input[type="email"] {
-            width: 100%;
-            padding: 12px;
-            border-radius: 16px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
+        .chat-block { margin-top: 30px; padding: 25px; background: #f8f9fa; border-radius: 24px; }
+        .chat-poster { width: 100%; max-width: 500px; border-radius: 20px; margin-bottom: 15px; }
+        .section-title { font-size: 24px; font-weight: 700; margin: 45px 0 20px; padding-bottom: 8px; border-bottom: 3px solid #AF2C83; color: #22212F; }
+        .section-title:first-of-type { margin-top: 0; }
+        .games-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 15px; }
+        .game-card-wrapper { background: #e0e0e0; border-radius: 20px; padding: 2px; cursor: pointer; transition: 0.2s; }
+        .game-card-wrapper.selected { background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224); }
+        .game-card { background: white; border-radius: 18px; padding: 16px; }
+        .game-card-wrapper.selected .game-card { background: #f0f5ff; }
+        .game-info { margin-bottom: 12px; }
+        .game-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; color: #1a1a2e; }
+        .game-date { font-size: 13px; color: #666; }
+        .game-image { width: 100%; border-radius: 12px; display: block; object-fit: contain; }
+        .players-grid, .yesno-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 15px 0 10px; }
+        .player-btn, .yesno-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 10px 18px; border-radius: 40px; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .player-btn.selected, .yesno-btn.selected { background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224); color: white; border: none; }
+        .question-title { font-weight: 700; margin: 20px 0 8px; font-size: 18px; }
+        .input-group { margin-bottom: 25px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; }
+        input[type="text"], input[type="tel"], input[type="email"] { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid #ccc; font-size: 16px; }
         button[type="submit"] {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
-            color: white;
-            border: none;
-            border-radius: 40px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 30px;
+            width: 100%; padding: 16px; background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224);
+            color: white; border: none; border-radius: 40px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px;
         }
-
-        .checkbox-group {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            align-items: center;
-        }
-
-        .status {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-            display: none;
-        }
-
-        .status.success {
-            color: green;
-            display: block;
-        }
-
-        .status.error {
-            color: red;
-            display: block;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 12px;
-            color: #aaa;
-        }
-
+        .checkbox-group { display: flex; gap: 10px; margin: 20px 0; align-items: center; }
+        .status { margin-top: 15px; text-align: center; font-size: 14px; display: none; }
+        .status.success { color: green; display: block; }
+        .status.error { color: red; display: block; }
+        footer { text-align: center; margin-top: 25px; font-size: 12px; color: #aaa; }
         @media (max-width: 768px) {
-            .hero {
-                min-height: 300px;
-                background-size: cover;
-                background-position: center 30%;
-            }
-
-            .hero::before {
-                background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 60%, rgba(175,44,131,0.95) 100%);
-            }
-
-            .hero-spacer {
-                height: 50px;
-            }
-
-            .form-wrapper {
-                margin-top: -50px;
-                padding: 0;
-            }
-
-            .form-switcher {
-                padding: 0 10px;
-            }
-
-            .form-container,
-            .thank-you {
-                padding: 25px 14px;
-                border-radius: 28px 28px 0 0;
-            }
-
-            .game-title {
-                font-size: 16px;
-            }
-
-            .game-date {
-                font-size: 12px;
-            }
-
-            .section-title {
-                font-size: 20px;
-                margin: 30px 0 15px 0;
-            }
-
-            .player-btn,
-            .yesno-btn {
-                padding: 8px 14px;
-                font-size: 14px;
-            }
-
-            button[type="submit"] {
-                font-size: 16px;
-                padding: 14px;
-            }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .hero {
-                min-height: 400px;
-            }
-
-            .form-container,
-            .thank-you {
-                padding: 35px 25px;
-            }
+            .hero { min-height: 300px; }
+            .hero::before { background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 60%, rgba(175,44,131,0.95) 100%); }
+            .hero-spacer { height: 50px; }
+            .form-wrapper { margin-top: -50px; }
+            .form-switcher { padding: 0 10px; }
+            .form-container, .thank-you { padding: 25px 14px; border-radius: 28px 28px 0 0; }
+            .game-title { font-size: 16px; }
+            .game-date { font-size: 12px; }
+            .section-title { font-size: 20px; margin: 30px 0 15px; }
+            .player-btn, .yesno-btn { padding: 8px 14px; font-size: 14px; }
+            button[type="submit"] { font-size: 16px; padding: 14px; }
         }
     </style>
 </head>
 <body>
 
-<div class="hero">
-    <div class="hero-content">
-        <div class="hero-spacer"></div>
-    </div>
-</div>
+<div class="hero"><div class="hero-content"><div class="hero-spacer"></div></div></div>
 
 <div class="form-wrapper" id="registrationForm">
-    <div class="form-switcher" id="formSwitcher">
+    <div class="form-switcher">
         <div class="form-container" id="formContainer">
             <form id="quizForm">
                 <div class="section-title">📅 На какой квиз идём?</div>
                 <div class="games-grid" id="gamesGrid"></div>
-
-                <div class="section-title" id="teamBlockTitle">👥 Команда</div>
+                <div class="section-title">👥 Команда</div>
                 <div class="input-group">
                     <label>Название команды *</label>
                     <input type="text" id="teamName" required placeholder="Например, Мозголомы">
@@ -406,10 +106,8 @@
                 <div class="question-title">Сколько вас?</div>
                 <div class="players-grid" id="playersGrid"></div>
                 <input type="hidden" id="lookingForTeam" value="no">
-                
                 <div id="dynamicQuestions"></div>
-
-                <div class="section-title" id="contactsBlockTitle">📋 Контакты</div>
+                <div class="section-title">📋 Контакты</div>
                 <div class="input-group">
                     <label>Контактный телефон</label>
                     <input type="tel" id="phone" placeholder="+7 999 123-45-67">
@@ -422,13 +120,11 @@
                     <input type="checkbox" id="consent" required>
                     <label>Я согласен(на) на обработку персональных данных *</label>
                 </div>
-
                 <button type="submit">ЗАРЕГИСТРИРОВАТЬСЯ 🚀</button>
                 <div id="statusMessage" class="status"></div>
                 <footer>Нажимая кнопку, вы принимаете условия обработки данных.</footer>
             </form>
         </div>
-
         <div class="thank-you" id="thankYou">
             <h2>🎉 Спасибо за регистрацию!</h2>
             <p>Мы свяжемся с вами в день игры.</p>
@@ -440,108 +136,56 @@
 <script>
     if (window.vkBridge) {
         vkBridge.send('VKWebAppInit')
-            .then(() => {
-                console.log('VK Mini App инициализирован');
-                return vkBridge.send('VKWebAppResizeWindow', { width: 'full', height: 'full' });
-            })
-            .then(() => console.log('Размер окна настроен'))
-            .catch(err => console.error('Ошибка VK:', err));
+            .then(() => vkBridge.send('VKWebAppResizeWindow', { width: 'full', height: 'full' }))
+            .catch(err => console.error('VK error:', err));
     }
 
     function getVkUserId() {
         const urlParams = new URLSearchParams(window.location.search);
         let userId = urlParams.get('vk_user_id');
-        
         if (!userId && window.vkBridge) {
             vkBridge.send('VKWebAppGetUserInfo')
-                .then(data => {
-                    if (data && data.id) {
-                        window.vkUserIdGlobal = data.id;
-                    }
-                })
-                .catch(err => console.log('VK ID через API не получен'));
+                .then(data => { if (data && data.id) window.vkUserIdGlobal = data.id; })
+                .catch(() => {});
         }
-        
         return userId || null;
     }
     
     const vkUserId = getVkUserId();
     window.vkUserIdGlobal = vkUserId;
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwS2rwzKHOeDbTg75vPJagreoCwQMEFVecBdFVtr-MfzaxDU4hGlpDLbPzEm35pE89hIQ/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjoox0efQ7oEJ37odCWB4QNXpB9_A9kP9EusofmfDvuY6tsjrjO5E3sQHdlnUeUrbuWA/exec';
 
     const games = [
-        {
-            id: 'game1',
-            title: '🔢 Без букв',
-            date: '📅 14 мая (ЧТ), 19:30 · Раковарня',
-            image: 'https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png'
-        },
-        {
-            id: 'game2',
-            title: '🧡 Классика. Обо всём',
-            date: '📅 17 мая (ВС), 15:00 · Раковарня',
-            image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png'
-        },
-        {
-            id: 'game3',
-            title: '🌇 Битва городов',
-            date: '📅 21 мая (ЧТ), 19:30 · Раковарня',
-            image: 'https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png'
-        },
-        {
-            id: 'game4',
-            title: '⚽ Футбол: серия игр (2/4)',
-            date: '📅 28 мая (ЧТ), 19:30 · Раковарня',
-            image: 'https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png'
-        },
-        {
-            id: 'game5',
-            title: '🎶 Музыкальное лото',
-            date: '📅 31 мая (ВС), 16:00 · Типография',
-            image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png'
-        }
+        { id: 'game1', title: '🔢 Без букв', date: '📅 14 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gfbtQYnx8M0cvwPLZ2gT8ATN4wyyakiz5zCSNR4wa.png' },
+        { id: 'game2', title: '🧡 Классика. Обо всём', date: '📅 17 мая (ВС), 15:00 · Раковарня', image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png' },
+        { id: 'game3', title: '🌇 Битва городов', date: '📅 21 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png' },
+        { id: 'game4', title: '⚽ Футбол: серия игр (2/4)', date: '📅 28 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png' },
+        { id: 'game5', title: '🎶 Музыкальное лото', date: '📅 31 мая (ВС), 16:00 · Типография', image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png' }
     ];
 
     function buildGamesGrid() {
-        const gamesGrid = document.getElementById('gamesGrid');
-        gamesGrid.innerHTML = '';
-        
+        const grid = document.getElementById('gamesGrid');
+        grid.innerHTML = '';
         games.forEach(game => {
             const wrapper = document.createElement('div');
             wrapper.className = 'game-card-wrapper';
             wrapper.setAttribute('data-game-id', game.id);
-            
             const card = document.createElement('div');
             card.className = 'game-card';
-            
-            card.innerHTML = `
-                <div class="game-info">
-                    <div class="game-title">${game.title}</div>
-                    <div class="game-date">${game.date}</div>
-                </div>
-                <img class="game-image" src="${game.image}" alt="Постер ${game.title}">
-            `;
-            
+            card.innerHTML = `<div class="game-info"><div class="game-title">${game.title}</div><div class="game-date">${game.date}</div></div><img class="game-image" src="${game.image}" alt="Постер">`;
             wrapper.appendChild(card);
             wrapper.addEventListener('click', () => wrapper.classList.toggle('selected'));
-            gamesGrid.appendChild(wrapper);
+            grid.appendChild(wrapper);
         });
     }
-
     buildGamesGrid();
 
     const playersGrid = document.getElementById('playersGrid');
-    let selectedPlayers = null;
-    let isLookingForTeam = false;
-    let acceptOthers = null;
-    let hasBirthday = null;
-    let hasFreePass = null;
-    let freePassCount = '';
+    let selectedPlayers = null, isLookingForTeam = false, acceptOthers = null, hasBirthday = null, hasFreePass = null, freePassCount = '';
 
     function buildPlayersGrid() {
         playersGrid.innerHTML = '';
-        
         for (let i = 2; i <= 10; i++) {
             const btn = document.createElement('div');
             btn.className = 'player-btn';
@@ -549,22 +193,19 @@
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
-                selectedPlayers = i;
-                isLookingForTeam = false;
+                selectedPlayers = i; isLookingForTeam = false;
                 document.getElementById('lookingForTeam').value = 'no';
                 updateDynamicQuestions();
             });
             playersGrid.appendChild(btn);
         }
-        
         const lookingBtn = document.createElement('div');
         lookingBtn.className = 'player-btn';
         lookingBtn.innerText = '🤝 Ищу команду';
         lookingBtn.addEventListener('click', () => {
             document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('selected'));
             lookingBtn.classList.add('selected');
-            selectedPlayers = null;
-            isLookingForTeam = true;
+            selectedPlayers = null; isLookingForTeam = true;
             document.getElementById('lookingForTeam').value = 'yes';
             updateDynamicQuestions();
         });
@@ -574,120 +215,40 @@
     function updateDynamicQuestions() {
         const dynamicDiv = document.getElementById('dynamicQuestions');
         dynamicDiv.innerHTML = '';
-
-        if (isLookingForTeam) {
-            acceptOthers = null;
-        }
-        hasBirthday = null;
-        hasFreePass = null;
-        freePassCount = '';
+        if (isLookingForTeam) acceptOthers = null;
+        hasBirthday = null; hasFreePass = null; freePassCount = '';
 
         if (!isLookingForTeam && selectedPlayers) {
             const block = document.createElement('div');
-            block.innerHTML = `<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>`;
-            const btnDiv = document.createElement('div');
-            btnDiv.className = 'yesno-grid';
-            
-            const yesBtn = document.createElement('div');
-            yesBtn.className = 'yesno-btn';
-            yesBtn.innerText = 'Да';
-            
-            const noBtn = document.createElement('div');
-            noBtn.className = 'yesno-btn';
-            noBtn.innerText = 'Нет';
-            
-            yesBtn.onclick = () => {
-                acceptOthers = true;
-                yesBtn.classList.add('selected');
-                noBtn.classList.remove('selected');
-            };
-            
-            noBtn.onclick = () => {
-                acceptOthers = false;
-                noBtn.classList.add('selected');
-                yesBtn.classList.remove('selected');
-            };
-            
-            btnDiv.appendChild(yesBtn);
-            btnDiv.appendChild(noBtn);
-            block.appendChild(btnDiv);
-            dynamicDiv.appendChild(block);
+            block.innerHTML = '<div class="question-title">🤝 Готовы принять людей к себе в команду?</div>';
+            const btnDiv = document.createElement('div'); btnDiv.className = 'yesno-grid';
+            const yesBtn = document.createElement('div'); yesBtn.className = 'yesno-btn'; yesBtn.innerText = 'Да';
+            const noBtn = document.createElement('div'); noBtn.className = 'yesno-btn'; noBtn.innerText = 'Нет';
+            yesBtn.onclick = () => { acceptOthers = true; yesBtn.classList.add('selected'); noBtn.classList.remove('selected'); };
+            noBtn.onclick = () => { acceptOthers = false; noBtn.classList.add('selected'); yesBtn.classList.remove('selected'); };
+            btnDiv.appendChild(yesBtn); btnDiv.appendChild(noBtn); block.appendChild(btnDiv); dynamicDiv.appendChild(block);
         }
 
-        const birthdayBlock = document.createElement('div');
-        birthdayBlock.innerHTML = `<div class="question-title">🎂 Есть именинник?</div>`;
-        const bdayDiv = document.createElement('div');
-        bdayDiv.className = 'yesno-grid';
-        
-        const yesBday = document.createElement('div');
-        yesBday.className = 'yesno-btn';
-        yesBday.innerText = 'Да';
-        
-        const noBday = document.createElement('div');
-        noBday.className = 'yesno-btn';
-        noBday.innerText = 'Нет';
-        
-        yesBday.onclick = () => {
-            hasBirthday = true;
-            yesBday.classList.add('selected');
-            noBday.classList.remove('selected');
-        };
-        
-        noBday.onclick = () => {
-            hasBirthday = false;
-            noBday.classList.add('selected');
-            yesBday.classList.remove('selected');
-        };
-        
-        bdayDiv.appendChild(yesBday);
-        bdayDiv.appendChild(noBday);
-        birthdayBlock.appendChild(bdayDiv);
-        dynamicDiv.appendChild(birthdayBlock);
+        const bBlock = document.createElement('div');
+        bBlock.innerHTML = '<div class="question-title">🎂 Есть именинник?</div>';
+        const bDiv = document.createElement('div'); bDiv.className = 'yesno-grid';
+        const yB = document.createElement('div'); yB.className = 'yesno-btn'; yB.innerText = 'Да';
+        const nB = document.createElement('div'); nB.className = 'yesno-btn'; nB.innerText = 'Нет';
+        yB.onclick = () => { hasBirthday = true; yB.classList.add('selected'); nB.classList.remove('selected'); };
+        nB.onclick = () => { hasBirthday = false; nB.classList.add('selected'); yB.classList.remove('selected'); };
+        bDiv.appendChild(yB); bDiv.appendChild(nB); bBlock.appendChild(bDiv); dynamicDiv.appendChild(bBlock);
 
         const fpBlock = document.createElement('div');
-        fpBlock.innerHTML = `<div class="question-title">🎫 Есть ли у вас бесплатные проходки?</div>`;
-        const fpDiv = document.createElement('div');
-        fpDiv.className = 'yesno-grid';
-        
-        const yesFp = document.createElement('div');
-        yesFp.className = 'yesno-btn';
-        yesFp.innerText = 'Да';
-        
-        const noFp = document.createElement('div');
-        noFp.className = 'yesno-btn';
-        noFp.innerText = 'Нет';
-        
+        fpBlock.innerHTML = '<div class="question-title">🎫 Есть ли у вас бесплатные проходки?</div>';
+        const fpDiv = document.createElement('div'); fpDiv.className = 'yesno-grid';
+        const yF = document.createElement('div'); yF.className = 'yesno-btn'; yF.innerText = 'Да';
+        const nF = document.createElement('div'); nF.className = 'yesno-btn'; nF.innerText = 'Нет';
         const fpInput = document.createElement('input');
-        fpInput.type = 'text';
-        fpInput.placeholder = 'Сколько проходок? (напишите количество)';
-        fpInput.style.marginTop = '12px';
-        fpInput.style.width = '100%';
-        fpInput.style.display = 'none';
-        
-        fpInput.addEventListener('input', (e) => {
-            freePassCount = e.target.value;
-        });
-        
-        yesFp.onclick = () => {
-            hasFreePass = true;
-            yesFp.classList.add('selected');
-            noFp.classList.remove('selected');
-            fpInput.style.display = 'block';
-        };
-        
-        noFp.onclick = () => {
-            hasFreePass = false;
-            noFp.classList.add('selected');
-            yesFp.classList.remove('selected');
-            fpInput.style.display = 'none';
-            freePassCount = '';
-        };
-        
-        fpDiv.appendChild(yesFp);
-        fpDiv.appendChild(noFp);
-        fpBlock.appendChild(fpDiv);
-        fpBlock.appendChild(fpInput);
-        dynamicDiv.appendChild(fpBlock);
+        fpInput.type = 'text'; fpInput.placeholder = 'Сколько проходок?'; fpInput.style.marginTop = '12px'; fpInput.style.width = '100%'; fpInput.style.display = 'none';
+        fpInput.addEventListener('input', e => { freePassCount = e.target.value; });
+        yF.onclick = () => { hasFreePass = true; yF.classList.add('selected'); nF.classList.remove('selected'); fpInput.style.display = 'block'; };
+        nF.onclick = () => { hasFreePass = false; nF.classList.add('selected'); yF.classList.remove('selected'); fpInput.style.display = 'none'; freePassCount = ''; };
+        fpDiv.appendChild(yF); fpDiv.appendChild(nF); fpBlock.appendChild(fpDiv); fpBlock.appendChild(fpInput); dynamicDiv.appendChild(fpBlock);
     }
 
     buildPlayersGrid();
@@ -703,17 +264,12 @@
         if (existing) existing.remove();
         const chatBlock = document.createElement('div');
         chatBlock.className = 'chat-block';
-        chatBlock.innerHTML = `
-            <img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат">
-            <p>Не с кем сходить на квиз? Тогда переходите в наш чат, где вы точно найдете команду!</p>
-            <button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>
-        `;
+        chatBlock.innerHTML = `<img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат"><p>Не с кем сходить на квиз? Тогда переходите в наш чат!</p><button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>`;
         thankYouDiv.appendChild(chatBlock);
     }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const selectedWrappers = document.querySelectorAll('.game-card-wrapper.selected');
         if (selectedWrappers.length === 0) {
             statusDiv.textContent = '❌ Выберите хотя бы одну игру';
@@ -722,9 +278,9 @@
             return;
         }
 
-        const selectedGames = Array.from(selectedWrappers).map(wrapper => {
-            const title = wrapper.querySelector('.game-title')?.innerText || '';
-            const date = wrapper.querySelector('.game-date')?.innerText || '';
+        const selectedGames = Array.from(selectedWrappers).map(w => {
+            const title = w.querySelector('.game-title')?.innerText || '';
+            const date = w.querySelector('.game-date')?.innerText || '';
             return `${title} (${date})`;
         }).join('; ');
 
@@ -734,13 +290,13 @@
         const consent = document.getElementById('consent').checked;
 
         if (!teamName || !email) {
-            statusDiv.textContent = '❌ Заполните название команды и электронную почту';
+            statusDiv.textContent = '❌ Заполните название команды и почту';
             statusDiv.className = 'status error';
             setTimeout(() => statusDiv.className = 'status', 3000);
             return;
         }
         if (!consent) {
-            statusDiv.textContent = '❌ Необходимо согласие на обработку данных';
+            statusDiv.textContent = '❌ Нужно согласие на обработку данных';
             statusDiv.className = 'status error';
             setTimeout(() => statusDiv.className = 'status', 3000);
             return;
@@ -750,18 +306,14 @@
         const finalVkId = window.vkUserIdGlobal || vkUserId || '';
         const finalVkLink = finalVkId ? `https://vk.com/id${finalVkId}` : 'Не определён';
         
-        const acceptOthersStr = acceptOthers === true ? 'Да' : (acceptOthers === false ? 'Нет' : 'Не указано');
-        const hasBirthdayStr = hasBirthday === true ? 'Да' : (hasBirthday === false ? 'Нет' : 'Не указано');
-        const freePassStr = hasFreePass === true ? (freePassCount || 'Да (количество не указано)') : (hasFreePass === false ? 'Нет' : 'Не указано');
-
         const payload = {
             vkId: finalVkId,
             vkLink: finalVkLink,
             teamName: teamName,
             members: finalPlayers,
-            acceptOthers: acceptOthersStr,
-            hasBirthday: hasBirthdayStr,
-            freePass: freePassStr,
+            acceptOthers: acceptOthers === true ? 'Да' : (acceptOthers === false ? 'Нет' : 'Не указано'),
+            hasBirthday: hasBirthday === true ? 'Да' : (hasBirthday === false ? 'Нет' : 'Не указано'),
+            freePass: hasFreePass === true ? (freePassCount || 'Да') : (hasFreePass === false ? 'Нет' : 'Не указано'),
             gamesList: selectedGames,
             phone: phone || 'Не указан',
             email: email
@@ -777,12 +329,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            
             if (isLookingForTeam) addChatBlock();
             formContainer.classList.add('hidden');
             thankYouDiv.classList.add('show');
         } catch (err) {
-            statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже или напишите нам.';
+            statusDiv.textContent = '⚠️ Ошибка. Попробуйте позже.';
             statusDiv.className = 'status error';
             setTimeout(() => statusDiv.className = 'status', 3000);
         }

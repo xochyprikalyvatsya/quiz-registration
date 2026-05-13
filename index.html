@@ -6,6 +6,10 @@
     <meta http-equiv="Content-Security-Policy" content="frame-ancestors *">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Регистрация на квиз | Эйнштейн Party</title>
+    
+    <!-- 1. ДОБАВЛЯЕМ VK Bridge (обязательно для VK Mini Apps) -->
+    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -373,6 +377,26 @@
 </div>
 
 <script>
+    // 2. ИНИЦИАЛИЗИРУЕМ VK MINI APP (это убирает белый экран загрузки)
+    if (window.vkBridge) {
+        vkBridge.send('VKWebAppInit')
+            .then(() => {
+                console.log('VK Mini App успешно инициализирован');
+                
+                // Настройка размера окна
+                return vkBridge.send('VKWebAppResizeWindow', {
+                    width: 'full',
+                    height: 'full'
+                });
+            })
+            .then(() => {
+                console.log('Размер окна настроен');
+            })
+            .catch((error) => {
+                console.error('Ошибка инициализации VK:', error);
+            });
+    }
+
     function getVkIdFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('vk_user_id');

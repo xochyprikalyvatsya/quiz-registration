@@ -195,13 +195,13 @@
     document.getElementById('quizForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const sw = document.querySelectorAll('.game-card-wrapper.selected');
-        if (sw.length === 0) { alert('Выберите игру'); return; }
+        if (sw.length === 0) { statusDiv.textContent = '❌ Выберите игру'; statusDiv.className = 'status error'; return; }
         const sg = Array.from(sw).map(w => w.querySelector('.game-title').innerText + ' (' + w.querySelector('.game-date').innerText + ')').join('; ');
         const tn = document.getElementById('teamName').value.trim();
         const em = document.getElementById('email').value.trim();
         const ph = document.getElementById('phone').value.trim();
-        if (!tn || !em) { alert('Заполните команду и почту'); return; }
-        if (!document.getElementById('consent').checked) { alert('Нужно согласие'); return; }
+        if (!tn || !em) { statusDiv.textContent = '❌ Заполните команду и почту'; statusDiv.className = 'status error'; return; }
+        if (!document.getElementById('consent').checked) { statusDiv.textContent = '❌ Нужно согласие'; statusDiv.className = 'status error'; return; }
 
         const fId = window.vkUserIdGlobal || vkUserId || '';
         const fLink = fId ? `https://vk.com/id${fId}` : '';
@@ -221,12 +221,16 @@
             email: em
         };
 
+        statusDiv.textContent = '⏳ Отправка...';
+        statusDiv.className = 'status';
+
         try {
             await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             document.getElementById('formContainer').classList.add('hidden');
             document.getElementById('thankYou').classList.add('show');
         } catch (err) {
-            alert('Ошибка');
+            statusDiv.textContent = '⚠️ Ошибка';
+            statusDiv.className = 'status error';
         }
     });
 </script>

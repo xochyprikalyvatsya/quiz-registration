@@ -83,27 +83,13 @@
             .catch(() => {});
     }
 
-    function getVkUserId() {
-        const p = new URLSearchParams(window.location.search);
-        let id = p.get('vk_user_id');
-        if (!id && window.vkBridge) {
-            vkBridge.send('VKWebAppGetUserInfo')
-                .then(d => { if (d && d.id) window.vkUserIdGlobal = d.id; })
-                .catch(() => {});
-        }
-        return id || null;
-    }
-    
-    const vkUserId = getVkUserId();
-    window.vkUserIdGlobal = vkUserId;
-
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQgp6eGZjut8zs0gql-NfU42UgMjbrW9C1-lEmFe7YbuNKwQoQafMT-0F7FYLjJXi9tA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOZka_52KA9FbYJ4tPt02pRMz8eXKXot-41FbW4gkdSyb-eMtqdvDstO6k9y0sHVHgWA/exec';
 
     const games = [
-        { id: 'game2', title: '🧡 Классика. Обо всём', date: '📅 17 мая (ВС), 15:00 · Раковарня', image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png' },
-        { id: 'game3', title: '🌇 Битва городов', date: '📅 21 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png' },
-        { id: 'game4', title: '⚽ Футбол: серия игр (2/4)', date: '📅 28 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png' },
-        { id: 'game5', title: '🎶 Музыкальное лото', date: '📅 31 мая (ВС), 16:00 · Типография', image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png' }
+        { title: '🧡 Классика. Обо всём', date: '📅 17 мая (ВС), 15:00 · Раковарня', image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png' },
+        { title: '🌇 Битва городов', date: '📅 21 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png' },
+        { title: '⚽ Футбол: серия игр (2/4)', date: '📅 28 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png' },
+        { title: '🎶 Музыкальное лото', date: '📅 31 мая (ВС), 16:00 · Типография', image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png' }
     ];
 
     function buildGamesGrid() {
@@ -135,7 +121,6 @@
                 document.querySelectorAll('.player-btn').forEach(x => x.classList.remove('selected'));
                 b.classList.add('selected');
                 selectedPlayers = i; isLookingForTeam = false;
-                document.getElementById('lookingForTeam').value = 'no';
                 updateDynamicQuestions();
             });
             g.appendChild(b);
@@ -147,7 +132,6 @@
             document.querySelectorAll('.player-btn').forEach(x => x.classList.remove('selected'));
             lb.classList.add('selected');
             selectedPlayers = null; isLookingForTeam = true;
-            document.getElementById('lookingForTeam').value = 'yes';
             updateDynamicQuestions();
         });
         g.appendChild(lb);
@@ -206,14 +190,10 @@
         if (!tn || !em) { document.getElementById('statusMessage').textContent = '❌ Заполните команду и почту'; document.getElementById('statusMessage').className = 'status error'; return; }
         if (!document.getElementById('consent').checked) { document.getElementById('statusMessage').textContent = '❌ Нужно согласие'; document.getElementById('statusMessage').className = 'status error'; return; }
 
-        const fId = window.vkUserIdGlobal || vkUserId || '';
-        const fLink = fId ? `https://vk.com/id${fId}` : '';
-        const fDialog = fId ? `https://vk.com/gim181502694?sel=${fId}` : '';
-
         const payload = {
-            vkId: fId,
-            vkLink: fLink,
-            dialogLink: fDialog,
+            vkId: '',
+            vkLink: '',
+            dialogLink: '',
             teamName: tn,
             members: isLookingForTeam ? 'Ищу команду' : (selectedPlayers || ''),
             acceptOthers: acceptOthers === true ? 'Да' : (acceptOthers === false ? 'Нет' : ''),

@@ -42,6 +42,8 @@
         input[type="text"], input[type="tel"], input[type="email"] { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid #ccc; font-size: 16px; }
         button[type="submit"] { width: 100%; padding: 16px; background: linear-gradient(135deg, #AF2C83, #E50B7C, #F9B224); color: white; border: none; border-radius: 40px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; }
         .checkbox-group { display: flex; gap: 10px; margin: 20px 0; align-items: center; }
+        .status { margin-top: 15px; text-align: center; font-size: 14px; display: none; }
+        .status.error { color: red; display: block; }
         @media (max-width: 768px) { .hero { min-height: 300px; } .hero-spacer { height: 50px; } .form-wrapper { margin-top: -50px; padding: 0 10px 40px; } .form-container, .thank-you { padding: 25px 14px; border-radius: 28px; } .game-title { font-size: 16px; } .game-date { font-size: 12px; } .section-title { font-size: 20px; margin: 30px 0 15px; } .player-btn, .yesno-btn { padding: 8px 14px; font-size: 14px; } button[type="submit"] { font-size: 16px; padding: 14px; } }
     </style>
 </head>
@@ -64,6 +66,7 @@
                 <div class="input-group"><label>Электронная почта *</label><input type="email" id="email" required placeholder="example@mail.ru"></div>
                 <div class="checkbox-group"><input type="checkbox" id="consent" required><label>Я согласен(на) на обработку персональных данных *</label></div>
                 <button type="submit">ЗАРЕГИСТРИРОВАТЬСЯ 🚀</button>
+                <div id="statusMessage" class="status"></div>
             </form>
         </div>
         <div class="thank-you" id="thankYou">
@@ -195,13 +198,13 @@
     document.getElementById('quizForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const sw = document.querySelectorAll('.game-card-wrapper.selected');
-        if (sw.length === 0) { statusDiv.textContent = '❌ Выберите игру'; statusDiv.className = 'status error'; return; }
+        if (sw.length === 0) { document.getElementById('statusMessage').textContent = '❌ Выберите игру'; document.getElementById('statusMessage').className = 'status error'; return; }
         const sg = Array.from(sw).map(w => w.querySelector('.game-title').innerText + ' (' + w.querySelector('.game-date').innerText + ')').join('; ');
         const tn = document.getElementById('teamName').value.trim();
         const em = document.getElementById('email').value.trim();
         const ph = document.getElementById('phone').value.trim();
-        if (!tn || !em) { statusDiv.textContent = '❌ Заполните команду и почту'; statusDiv.className = 'status error'; return; }
-        if (!document.getElementById('consent').checked) { statusDiv.textContent = '❌ Нужно согласие'; statusDiv.className = 'status error'; return; }
+        if (!tn || !em) { document.getElementById('statusMessage').textContent = '❌ Заполните команду и почту'; document.getElementById('statusMessage').className = 'status error'; return; }
+        if (!document.getElementById('consent').checked) { document.getElementById('statusMessage').textContent = '❌ Нужно согласие'; document.getElementById('statusMessage').className = 'status error'; return; }
 
         const fId = window.vkUserIdGlobal || vkUserId || '';
         const fLink = fId ? `https://vk.com/id${fId}` : '';
@@ -221,16 +224,13 @@
             email: em
         };
 
-        statusDiv.textContent = '⏳ Отправка...';
-        statusDiv.className = 'status';
-
         try {
             await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             document.getElementById('formContainer').classList.add('hidden');
             document.getElementById('thankYou').classList.add('show');
         } catch (err) {
-            statusDiv.textContent = '⚠️ Ошибка';
-            statusDiv.className = 'status error';
+            document.getElementById('statusMessage').textContent = '⚠️ Ошибка';
+            document.getElementById('statusMessage').className = 'status error';
         }
     });
 </script>

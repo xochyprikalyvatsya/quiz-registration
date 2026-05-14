@@ -59,7 +59,6 @@
                 <div class="input-group"><label>Название команды *</label><input type="text" id="teamName" required placeholder="Например, Мозголомы"></div>
                 <div class="question-title">Сколько вас?</div>
                 <div class="players-grid" id="playersGrid"></div>
-                <input type="hidden" id="lookingForTeam" value="no">
                 <div id="dynamicQuestions"></div>
                 <div class="section-title">📋 Контакты</div>
                 <div class="input-group"><label>Контактный телефон</label><input type="tel" id="phone" placeholder="+7 999 123-45-67"></div>
@@ -81,6 +80,11 @@
         vkBridge.send('VKWebAppInit')
             .then(() => vkBridge.send('VKWebAppResizeWindow', { width: 'full', height: 'full' }))
             .catch(() => {});
+    }
+
+    function getVkUserId() {
+        const p = new URLSearchParams(window.location.search);
+        return p.get('vk_user_id') || '';
     }
 
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOZka_52KA9FbYJ4tPt02pRMz8eXKXot-41FbW4gkdSyb-eMtqdvDstO6k9y0sHVHgWA/exec';
@@ -190,10 +194,14 @@
         if (!tn || !em) { document.getElementById('statusMessage').textContent = '❌ Заполните команду и почту'; document.getElementById('statusMessage').className = 'status error'; return; }
         if (!document.getElementById('consent').checked) { document.getElementById('statusMessage').textContent = '❌ Нужно согласие'; document.getElementById('statusMessage').className = 'status error'; return; }
 
+        const fId = getVkUserId();
+        const fLink = fId ? `https://vk.com/id${fId}` : '';
+        const fDialog = fId ? `https://vk.com/gim181502694?sel=${fId}` : '';
+
         const payload = {
-            vkId: '',
-            vkLink: '',
-            dialogLink: '',
+            vkId: fId,
+            vkLink: fLink,
+            dialogLink: fDialog,
             teamName: tn,
             members: isLookingForTeam ? 'Ищу команду' : (selectedPlayers || ''),
             acceptOthers: acceptOthers === true ? 'Да' : (acceptOthers === false ? 'Нет' : ''),

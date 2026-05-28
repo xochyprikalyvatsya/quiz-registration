@@ -44,6 +44,8 @@
         .checkbox-group { display: flex; gap: 10px; margin: 20px 0; align-items: center; }
         .status { margin-top: 15px; text-align: center; font-size: 14px; display: none; }
         .status.error { color: red; display: block; }
+        .chat-block { margin-top: 30px; padding: 25px; background: #f8f9fa; border-radius: 24px; }
+        .chat-poster { width: 100%; max-width: 500px; border-radius: 20px; margin-bottom: 15px; }
         @media (max-width: 768px) { .hero { min-height: 300px; } .hero-spacer { height: 50px; } .form-wrapper { margin-top: -50px; padding: 0 10px 40px; } .form-container, .thank-you { padding: 25px 14px; border-radius: 28px; } .game-title { font-size: 16px; } .game-date { font-size: 12px; } .section-title { font-size: 20px; margin: 30px 0 15px; } .player-btn, .yesno-btn { padding: 8px 14px; font-size: 14px; } button[type="submit"] { font-size: 16px; padding: 14px; } }
     </style>
 </head>
@@ -87,13 +89,27 @@
         return p.get('vk_user_id') || '';
     }
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOZka_52KA9FbYJ4tPt02pRMz8eXKXot-41FbW4gkdSyb-eMtqdvDstO6k9y0sHVHgWA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8ODnB15hP4DYATjkhHVwJ7HPiiocJgMs7XTSxDYeownScMPN8gtdLV6GGfl9IUIXnIA/exec';
 
     const games = [
-        { title: '🧡 Классика. Обо всём', date: '📅 17 мая (ВС), 15:00 · Раковарня', image: 'https://s10.iimage.su/s/12/gkLBzazx9uim7sGfHRcd5mAkYyuHZOezNrhJekMCe.png' },
-        { title: '🌇 Битва городов', date: '📅 21 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/guXJYLCxNvaN8aeuSEU4khXUzzocoQI6GVZmsU3qA.png' },
-        { title: '⚽ Футбол: серия игр (2/4)', date: '📅 28 мая (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/12/gJdwhgdxdeiQ1rIl0aUGuJ6Gtn1YXRn4NI35Duok4.png' },
-        { title: '🎶 Музыкальное лото', date: '📅 31 мая (ВС), 16:00 · Типография', image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png' }
+         { title: '🎶 Музыкальное лото', date: '📅 31 мая (ВС), 16:00 · Типография', image: 'https://s10.iimage.su/s/12/gBHyjIxx29KNc7yFL3Hs918ozPipLWkseImAUcS48.png' },
+        { title: '⚡ MARVEL против DC', date: '📅 2 июня (ВТ), 19:30 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/gbzRKECxkvXsU4hFkTDr1fhii24U5l5Y3W8jIzhiK.png' },
+        { title: '🎶 Муз.лото: поп-хиты', date: '📅 4 июня (ЧТ), 19:30 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/g3yMGavx97pDu7dmh9fTbjizMheE3wCjeAV4WiM1b.png' },
+        { title: '🎤 Русские хиты: 90-е и 00-е', date: '📅 5 июня (ПТ), 19:00 · Типография', image: 'https://s10.iimage.su/s/27/gMUPMGmxPDYdo4WrJgzMWgPEjrXZrpS7eUBorGH7c.png' },
+        { title: '🎭 Классика: обо всём', date: '📅 7 июня (ВС), 16:30 · Раковарня', image: 'https://s10.iimage.su/s/27/gj5JOWbxzJdvzqTiyqwm6TA8aAacMo2V3pYtup9Hw.png' },
+        { title: '🔢 БЕЗ БУКВ', date: '📅 9 июня (ВТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/27/gCTHqePxe81FZ2TrbO1zMCTvTCf6KalCQvqF9rIAW.png' },
+        { title: '👫 Культовый ситком ДРУЗЬЯ', date: '📅 11 июня (ЧТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/27/gmrfODAxozb9baVpg7L8UsBUayunTPYBgVk0ydUJs.png' },
+        { title: '🎵 Муз.лото: русские хиты', date: '📅 12 июня (ПТ), 19:00 · Типография', image: 'https://s10.iimage.su/s/27/gOL8OLIxh1ZfpU9H8XzzyX1ovolBBCZ567FwenHGK.png' },
+        { title: '🌍 Классика: обо всём', date: '📅 14 июня (ВС), 16:30 · Раковарня', image: 'https://s10.iimage.su/s/27/g1CIRzDxeNo9nPielKIWrNgFccC9pUyRT3zClJfiB.png' },
+        { title: '🪄 Мир Гарри Поттера', date: '📅 16 июня (ВТ), 19:30 · Раковарня', image: 'https://s10.iimage.su/s/27/gBTwyUIxzceNNKgMPUN2myCfJJh8SrzmgBe81gH1R.png' },
+        { title: '🎬 Угадай мелодию: хиты', date: '📅 18 июня (ЧТ), 19:30 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/g0LXIcOxT8lCF9CRFmnHhtSoHEnQXCPLeT0I2ZlaH.png' },
+        { title: '🎸 Муз.лото: Рок-Баллады', date: '📅 19 июня (ПТ), 19:00 · Типография', image: 'https://s10.iimage.su/s/27/gknCLZlxHUNU7ekDoPz3jzqmvH7SUXOk8Gom8Su5P.png' },
+        { title: '⚧ Классика: обо всём', date: '📅 21 июня (ВС), 16:30 · Раковарня', image: 'https://s10.iimage.su/s/27/gn9cblRxRo7DuCFDFszQ9YqVCizSqVhVF9LKEaHTN.png' },
+        { title: '📀 Муз.лото: Золотые Нулевые', date: '📅 23 июня (ВТ), 19:30 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/gyehywKxKWpDoc2ds6rZnBRdVQzJGTFoiIdCOrKIv.png' },
+        { title: '📚 Литература', date: '📅 24 июня (СР), 19:30 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/gf6Ymx1xsEoXHHuyWNMCk4NXOYjOjwjEOTkFGJMkN.png' },
+        { title: '⚽ Футбол: серия игр (3 из 4)', date: '📅 26 июня (ПТ), 19:00 · Типография', image: 'https://s10.iimage.su/s/27/gXXybc9xIEQf8fQDCf965q56ZNclvD7JLAEuH2ktW.png' },
+        { title: '🍻 FUN LITE КВИЗ', date: '📅 27 июня (СБ), 14:00 · Волковская пивоварня', image: 'https://s10.iimage.su/s/27/gSt80zMx2eGUEkIzul7AVPI3VVDwDbIMbujuTzmdA.png' },
+        { title: '📱 Классика: обо всём', date: '📅 28 июня (ВС), 20:00 · Раковарня', image: 'https://s10.iimage.su/s/27/gafCUnkxbGYADoZZzRBvu2zOdER8AFzEPUKLNDUaY.png' }
     ];
 
     function buildGamesGrid() {
@@ -104,7 +120,7 @@
             w.className = 'game-card-wrapper';
             const c = document.createElement('div');
             c.className = 'game-card';
-            c.innerHTML = `<div class="game-info"><div class="game-title">${game.title}</div><div class="game-date">${game.date}</div></div><img class="game-image" src="${game.image}" alt="">`;
+            c.innerHTML = `<div class="game-info"><div class="game-title">${game.title}</div><div class="game-date">${game.date}</div></div><img class="game-image" src="${game.image}" alt="" loading="lazy">`;
             w.appendChild(c);
             w.addEventListener('click', () => w.classList.toggle('selected'));
             g.appendChild(w);
@@ -183,6 +199,16 @@
     buildPlayersGrid();
     updateDynamicQuestions();
 
+    function addChatBlock() {
+        const thankYou = document.getElementById('thankYou');
+        const existing = thankYou.querySelector('.chat-block');
+        if (existing) existing.remove();
+        const chatBlock = document.createElement('div');
+        chatBlock.className = 'chat-block';
+        chatBlock.innerHTML = `<img class="chat-poster" src="https://s10.iimage.su/s/12/gdJf0XkxOa9UN7bUBzZeKEHehM9gQ2m2qRe81Qny9.png" alt="Чат"><p>Не с кем сходить на квиз? Тогда переходите в наш чат, где вы точно найдете команду!</p><button onclick="window.location.href='https://vk.me/join/g08miMz7NPTeZeLqR2ByBGZl_Tbofb5t3vE='">Перейти в чат</button>`;
+        thankYou.appendChild(chatBlock);
+    }
+
     document.getElementById('quizForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const sw = document.querySelectorAll('.game-card-wrapper.selected');
@@ -214,6 +240,7 @@
 
         try {
             await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            if (isLookingForTeam) addChatBlock();
             document.getElementById('formContainer').classList.add('hidden');
             document.getElementById('thankYou').classList.add('show');
         } catch (err) {
